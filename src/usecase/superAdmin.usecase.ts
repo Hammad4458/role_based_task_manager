@@ -1,6 +1,6 @@
 import {  Injectable } from "@nestjs/common";
 import { SuperAdmin } from "src/infrastructure/orm/entities/superAdmin.entity";
-import { SuperAdminRepository } from "src/infrastructure/orm/repositories/users.repositories";
+import { SuperAdminRepository } from "src/infrastructure/orm/repositories/superAdmin.repositories";
 
 @Injectable()
 export class SuperAdminUseCase{

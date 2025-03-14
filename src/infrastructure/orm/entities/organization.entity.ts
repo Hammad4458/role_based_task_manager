@@ -13,8 +13,9 @@ export class Organization implements IOrganization {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.organizations)
-  superAdmin: SuperAdmin[];
+  @ManyToMany(() => SuperAdmin, (superAdmin) => superAdmin.organizations) 
+  @JoinTable()
+  superAdmins: SuperAdmin[];
 
   @ManyToMany(() => Department, (department) => department.organizations)
   @JoinTable()
