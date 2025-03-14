@@ -7,14 +7,14 @@ import { User } from './users.entity';
 
 @Entity()
 export class Department implements IDepartment {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
   @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.departments)
-  superAdmin: SuperAdmin;
+  superAdmin: SuperAdmin[];
 
   @ManyToMany(() => Organization, (organization) => organization.departments)
   organizations: Organization[];

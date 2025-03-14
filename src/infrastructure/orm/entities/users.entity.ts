@@ -15,7 +15,7 @@ export enum UserRole {
 
 @Entity()
 export class User implements IUser {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ type: 'varchar', length: 255 })

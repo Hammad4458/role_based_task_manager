@@ -7,7 +7,7 @@ import { User } from './users.entity';
 
 @Entity()
 export class SuperAdmin implements ISuperAdmin {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ type: 'varchar', length: 255 })
