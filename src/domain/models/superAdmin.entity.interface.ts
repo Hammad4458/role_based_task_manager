@@ -5,7 +5,7 @@ import { User } from "src/infrastructure/orm/entities/users.entity";
 export interface ISuperAdmin {
   id: string;
   name: string;
-  organizations: Organization[];
-  departments: Department[];
-  users: User[];
+  organizations?: Organization[];
+  departments?: Department[];
+  users?: User[];
 }

@@ -13,12 +13,12 @@ export class SuperAdmin implements ISuperAdmin {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @OneToMany(() => Organization, (organization) => organization.superAdmin)
+  @OneToMany(() => Organization, (organization) => organization.superAdmin ,{nullable : true})
   organizations: Organization[];
 
-  @OneToMany(() => Department, (department) => department.superAdmin)
+  @OneToMany(() => Department, (department) => department.superAdmin, {nullable : true})
   departments: Department[];
 
-  @OneToMany(() => User, (user) => user.superAdmin)
+  @OneToMany(() => User, (user) => user.superAdmin,{nullable : true})
   users: User[];
 }
