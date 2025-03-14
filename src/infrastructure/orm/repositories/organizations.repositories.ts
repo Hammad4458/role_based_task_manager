@@ -45,6 +45,10 @@ export class OrganizationRepository {
         });
     }
     
-    
+    async getAllOrganizations(): Promise<Organization[]> {
+        return this.organizationRepo.find({
+            relations: ["superAdmins",  "users"],
+        });
+    }
     
 }

@@ -11,4 +11,9 @@ export class OrganizationUseCase{
     async createOrganization(orgData: { name: string; superAdmin: number[] }) {
         return await this.organizationRepo.createOrganization(orgData);
     }
+
+     async getAllOrganiations(): Promise<Organization[]> {
+            return this.organizationRepo.getAllOrganizations();
+        }
+    
 }

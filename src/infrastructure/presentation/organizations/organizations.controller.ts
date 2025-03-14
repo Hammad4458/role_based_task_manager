@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post } from "@nestjs/common";
 import { Organization } from "src/infrastructure/orm/entities/organization.entity";
 import { ORGANIZATION_USECASE_PROXY, UseCaseProxy } from "src/infrastructureUseCaseBridge/usecase.bridge.proxy";
 import { OrganizationUseCase } from "src/usecase/organizations.usecase";
@@ -14,6 +14,11 @@ export class OrganizationController{
         console.log(body); // ✅ Now body is defined
         return this.organizationUseCaseProxy.useCase.createOrganization(body);
     }
+
+     @Get()
+      async getAllOrganizations() {
+          return this.organizationUseCaseProxy.useCase.getAllOrganiations();
+      }
 
     
 }
