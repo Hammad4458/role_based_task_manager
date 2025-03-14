@@ -12,4 +12,8 @@ export class SuperAdminUseCase{
        
         return await this.superAdminRepo.createSuperAdmin(user);
     }
+
+    async getAllSuperAdmins(): Promise<SuperAdmin[]> {
+        return this.superAdminRepo.getAllSuperAdmins();
+    }
 }

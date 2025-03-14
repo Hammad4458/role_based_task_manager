@@ -1,7 +1,7 @@
 import {  Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SuperAdmin } from "../entities/superAdmin.entity";
-import { Repository } from "typeorm";
+import { Repository,In } from "typeorm";
 import { ISuperAdmin } from "src/domain/models/superAdmin.entity.interface";
 
 @Injectable()
@@ -18,4 +18,18 @@ export class SuperAdminRepository{
           const newUser = this.superAdminRepo.create(user);
           return await this.superAdminRepo.save(newUser);
     }
+
+    async findByIds(ids: number[]) {
+        return this.superAdminRepo.find({
+            where: { id: In(ids) },
+        });
+    }
+
+    async getAllSuperAdmins(): Promise<SuperAdmin[]> {
+        return this.superAdminRepo.find({
+            relations: ["organizations"], 
+        });
+    }
+    
+    
 }

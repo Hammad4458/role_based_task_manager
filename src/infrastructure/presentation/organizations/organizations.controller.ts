@@ -9,9 +9,11 @@ export class OrganizationController{
         @Inject(ORGANIZATION_USECASE_PROXY)
         private readonly organizationUseCaseProxy:UseCaseProxy<OrganizationUseCase>,
     ){}
-    @Post('create')
-    async createOrganization(@Body() body:any){
-        console.log(body);
+    @Post("create")
+    async createOrganization(@Body() body: { name: string; superAdmin: number[] }) {
+        console.log(body); // ✅ Now body is defined
         return this.organizationUseCaseProxy.useCase.createOrganization(body);
     }
+
+    
 }

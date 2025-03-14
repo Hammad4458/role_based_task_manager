@@ -4,7 +4,7 @@ import { SuperAdmin } from "src/infrastructure/orm/entities/superAdmin.entity";
 import { Task } from "src/infrastructure/orm/entities/tasks.entity";
 
 export interface IUser {
-    id: string;
+    id: number;
     name: string;
     email: string;
     password: string;

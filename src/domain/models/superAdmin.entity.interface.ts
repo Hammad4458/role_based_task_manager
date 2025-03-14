@@ -3,7 +3,7 @@ import { Organization } from "src/infrastructure/orm/entities/organization.entit
 import { User } from "src/infrastructure/orm/entities/users.entity";
 
 export interface ISuperAdmin {
-  id: string;
+  id: number;
   name: string;
   organizations?: Organization[];
   departments?: Department[];

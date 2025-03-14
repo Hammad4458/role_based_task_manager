@@ -27,7 +27,7 @@ import { User } from './users.entity';
   @Entity()
   export class Task implements ITask {
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
   
     @Column({ type: 'varchar', length: 255 })
     title: string;

@@ -8,8 +8,7 @@ export class OrganizationUseCase{
         private readonly organizationRepo:OrganizationRepository,
     ){}
 
-    async createOrganization(org : Partial<Organization>):Promise<Organization>{
-        
-        return await this.organizationRepo.createOrganization(org);
+    async createOrganization(orgData: { name: string; superAdmin: number[] }) {
+        return await this.organizationRepo.createOrganization(orgData);
     }
 }

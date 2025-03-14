@@ -8,7 +8,7 @@ import { User } from './users.entity';
 @Entity()
 export class Department implements IDepartment {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ type: 'varchar', length: 255 })
   name: string;

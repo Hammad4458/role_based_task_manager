@@ -4,7 +4,7 @@ import { User } from "src/infrastructure/orm/entities/users.entity";
 
 
 export interface IOrganization {
-  id: string;
+  id: number;
   name: string;
   superAdmins: SuperAdmin[];
   departments: Department[];

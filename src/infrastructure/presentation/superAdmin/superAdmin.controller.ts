@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject } from "@nestjs/common";
+import { Controller, Post, Body, Inject, Get } from "@nestjs/common";
 import { SUPER_ADMIN_USECASE_PROXY, UseCaseProxy } from "src/infrastructureUseCaseBridge/usecase.bridge.proxy";
 import { SuperAdminUseCase } from "src/usecase/superAdmin.usecase";
 
@@ -12,5 +12,10 @@ export class SuperAdminController {
   @Post('create')
   async createSuperAdmin(@Body() body: any) {
     return this.superAdminUseCaseProxy.useCase.createSuperAdmin(body);
+  }
+
+  @Get()
+  async getAllSuperAdmins() {
+      return this.superAdminUseCaseProxy.useCase.getAllSuperAdmins();
   }
 }

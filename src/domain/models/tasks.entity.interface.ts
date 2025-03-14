@@ -1,7 +1,7 @@
 import { User } from "src/infrastructure/orm/entities/users.entity";
 
 export interface ITask {
-    id: string;
+    id: number;
     title: string;
     description: string;
     dueDate: Date;

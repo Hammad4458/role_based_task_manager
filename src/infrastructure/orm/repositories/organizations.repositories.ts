@@ -1,22 +1,50 @@
 import { Injectable } from "@nestjs/common";
-import { Organization } from "../entities/organization.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { IOrganization } from "src/domain/models/organizations.entity.interface";
+import { Repository, In } from "typeorm";
+import { Organization } from "../entities/organization.entity"; 
+import { SuperAdminRepository } from "./superAdmin.repositories";
 
 @Injectable()
-export class OrganizationRepository{
+export class OrganizationRepository {
     constructor(
         @InjectRepository(Organization)
         private readonly organizationRepo: Repository<Organization>,
-     ) {}
-     
-    async createOrganization(organization : Partial<IOrganization>){
-        if(!organization || Object.keys(organization).length===0){
-            throw new Error("Organization data is missing");
-        }
-        const newOrganization = this.organizationRepo.create(organization);
-        return await this.organizationRepo.save(newOrganization);
-    }
 
+        private readonly superAdminRepo: SuperAdminRepository, // Custom repository
+    ) {}
+
+    async createOrganization(organizationData: { name: string; superAdmin: number[] }) {
+        const { name, superAdmin } = organizationData;
+    
+        if (!name || !Array.isArray(superAdmin) || superAdmin.length === 0) {
+            throw new Error("Organization name and at least one SuperAdmin ID are required.");
+        }
+    
+        // Fetch multiple SuperAdmins
+        const superAdmins = await this.superAdminRepo.findByIds(superAdmin);
+    
+        if (superAdmins.length !== superAdmin.length) {
+            throw new Error("One or more SuperAdmin IDs are invalid.");
+        }
+    
+        // Create and save new organization
+        let newOrganization = this.organizationRepo.create({ name });
+        newOrganization = await this.organizationRepo.save(newOrganization); 
+    
+        // Associate multiple SuperAdmins with the organization
+        await this.organizationRepo
+            .createQueryBuilder()
+            .relation(Organization, "superAdmins")
+            .of(newOrganization)
+            .add(superAdmins);
+    
+        // Reload the organization to include relations
+        return this.organizationRepo.findOne({
+            where: { id: newOrganization.id },
+            relations: ["superAdmins"],
+        });
+    }
+    
+    
+    
 }
