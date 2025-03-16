@@ -44,6 +44,12 @@ export class OrganizationRepository {
             relations: ["superAdmins"],
         });
     }
+
+    async findByIds(ids: number[]) {
+        return this.organizationRepo.find({
+            where: { id: In(ids) },
+        });
+    }
     
     async getAllOrganizations(): Promise<Organization[]> {
         return this.organizationRepo.find({

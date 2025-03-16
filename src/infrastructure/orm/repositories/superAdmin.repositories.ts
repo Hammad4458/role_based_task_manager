@@ -25,6 +25,10 @@ export class SuperAdminRepository{
         });
     }
 
+    async findById(id: number) {
+        return this.superAdminRepo.findOne({ where: { id } });
+    }
+
     async getAllSuperAdmins(): Promise<SuperAdmin[]> {
         return this.superAdminRepo.find({
             relations: ["organizations"], 

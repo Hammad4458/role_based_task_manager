@@ -1,5 +1,5 @@
 import { IDepartment } from 'src/domain/models/departments.entity.interface';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, OneToMany, JoinTable } from 'typeorm';
 import { SuperAdmin } from './superAdmin.entity';
 import { Organization } from './organization.entity';
 import { User } from './users.entity';
@@ -17,6 +17,7 @@ export class Department implements IDepartment {
   superAdmin: SuperAdmin[];
 
   @ManyToMany(() => Organization, (organization) => organization.departments)
+  @JoinTable()
   organizations: Organization[];
 
   @OneToMany(()=> User, (user)=>user.department)
