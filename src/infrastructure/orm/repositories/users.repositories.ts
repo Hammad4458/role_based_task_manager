@@ -60,6 +60,15 @@ export class UserRepository{
             relations: ["superAdmin", "organization", "department"],
         });
     }
+
+    async getUsersByDepartment(departmentId: number): Promise<User[]> {
+        return this.userRepo.find({
+            where: { department: { id: departmentId } },
+            relations: ["superAdmin", "organization", "department"],
+        });
+    }
+    
+    
     
     
 }

@@ -40,7 +40,6 @@ export class User implements IUser {
   department: Department;
 
   @ManyToMany(() => Task, (task) => task.assignedUsers)
-  @JoinTable()
   tasksAssigned: Task[];
 
   @OneToMany(() => Task, (task) => task.createdBy)

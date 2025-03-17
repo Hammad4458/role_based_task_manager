@@ -37,5 +37,10 @@ export class UserUseCase{
     async getAllUsers(): Promise<User[]> {
             return this.userRepo.getAllUsers();
         }
+
+        async getUsersByDepartment(departmentId: number): Promise<User[]> {
+            return this.userRepo.getUsersByDepartment(departmentId);
+        }
+        
     
 }
