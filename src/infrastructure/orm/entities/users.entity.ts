@@ -30,13 +30,13 @@ export class User implements IUser {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.users, { nullable: true })
+  @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.users, { nullable: true,cascade: ['insert', 'update'] })
   superAdmin: SuperAdmin;
 
-  @ManyToOne(() => Organization, (organization) => organization.users, { nullable: false })
+  @ManyToOne(() => Organization, (organization) => organization.users, { cascade: ['insert', 'update'] })
   organization: Organization;
 
-  @ManyToOne(() => Department, (department) => department.users)
+  @ManyToOne(() => Department, (department) => department.users,{cascade: ['insert', 'update']})
   department: Department;
 
   @ManyToMany(() => Task, (task) => task.assignedUsers)

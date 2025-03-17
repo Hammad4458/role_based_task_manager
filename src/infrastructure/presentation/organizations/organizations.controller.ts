@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Inject, Post } from "@nestjs/common";
-import { Organization } from "src/infrastructure/orm/entities/organization.entity";
 import { ORGANIZATION_USECASE_PROXY, UseCaseProxy } from "src/infrastructureUseCaseBridge/usecase.bridge.proxy";
 import { OrganizationUseCase } from "src/usecase/organizations.usecase";
 

@@ -13,7 +13,7 @@ export class SuperAdminRepository{
 
     async createSuperAdmin(user:Partial<ISuperAdmin>){
         if (!user || Object.keys(user).length === 0) {
-            throw new Error('User data is missing');
+            throw new Error('Super Admin data is missing');
           }
           const newUser = this.superAdminRepo.create(user);
           return await this.superAdminRepo.save(newUser);
@@ -32,7 +32,7 @@ export class SuperAdminRepository{
 
     async getAllSuperAdmins(): Promise<SuperAdmin[]> {
         return this.superAdminRepo.find({
-            relations: ["organizations"], 
+            relations: ["organizations","departments","users"], 
         });
     }
     

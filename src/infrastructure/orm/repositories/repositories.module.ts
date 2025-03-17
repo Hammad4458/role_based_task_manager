@@ -9,12 +9,13 @@ import { Task } from "../entities/tasks.entity";
 import { SuperAdminRepository } from "./superAdmin.repositories";
 import { OrganizationRepository } from "./organizations.repositories";
 import { DepartmentRepository } from "./departments.repositories";
+import { UserRepository } from "./users.repositories";
 
 
 @Module({
     imports:[TypeOrmModule.forFeature([SuperAdmin,Organization,Department,User,Task]),DatabaseOrmConfigModule],
-    providers:[SuperAdminRepository,OrganizationRepository,DepartmentRepository], 
-    exports:[SuperAdminRepository,OrganizationRepository,DepartmentRepository]
+    providers:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository], 
+    exports:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository]
     
 })
 

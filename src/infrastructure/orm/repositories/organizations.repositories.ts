@@ -10,7 +10,7 @@ export class OrganizationRepository {
         @InjectRepository(Organization)
         private readonly organizationRepo: Repository<Organization>,
 
-        private readonly superAdminRepo: SuperAdminRepository, // Custom repository
+        private readonly superAdminRepo: SuperAdminRepository, 
     ) {}
 
     async createOrganization(organizationData: { name: string; superAdmin: number[] }) {
@@ -52,12 +52,9 @@ export class OrganizationRepository {
         });
     }
     
-    
-    
-    
     async getAllOrganizations(): Promise<Organization[]> {
         return this.organizationRepo.find({
-            relations: ["superAdmins",  "users"],
+            relations: ["superAdmins",  "users", "departments"],
         });
     }
     
