@@ -27,16 +27,15 @@ export class OrganizationRepository {
             throw new Error("One or more SuperAdmin IDs are invalid.");
         }
     
-        // Create and save new organization
-        let newOrganization = this.organizationRepo.create({ name });
-        newOrganization = await this.organizationRepo.save(newOrganization); 
+        // ✅ Create and save new organization with SuperAdmins
+        let newOrganization = this.organizationRepo.create({ 
+            name, 
+            superAdmins // ✅ Include superAdmins here
+        });
     
-        // Associate multiple SuperAdmins with the organization
-        await this.organizationRepo
-            .createQueryBuilder()
-            .relation(Organization, "superAdmins")
-            .of(newOrganization)
-            .add(superAdmins);
+        newOrganization = await this.organizationRepo.save(newOrganization);
+    
+        // ✅ No need to separately associate superAdmins after saving
     
         // Reload the organization to include relations
         return this.organizationRepo.findOne({
@@ -44,12 +43,17 @@ export class OrganizationRepository {
             relations: ["superAdmins"],
         });
     }
+    
 
     async findByIds(ids: number[]) {
         return this.organizationRepo.find({
             where: { id: In(ids) },
+            relations: ["superAdmins",  "departments", "users"], // ✅ Fetch full objects
         });
     }
+    
+    
+    
     
     async getAllOrganizations(): Promise<Organization[]> {
         return this.organizationRepo.find({

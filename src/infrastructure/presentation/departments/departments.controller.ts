@@ -17,7 +17,7 @@ export class DepartmentController {
     @Body()
     body: {
       name: string;
-      superAdminIds: number[];
+      superAdminIds: number;
       organizationIds: number[];
     },
   ) {

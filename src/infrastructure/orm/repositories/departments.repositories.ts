@@ -17,60 +17,49 @@ export class DepartmentRepository {
 
   async createDepartment(departmentData: {
     name: string;
-    superAdminIds: number[]; // ✅ Now an array
+    superAdminIds: number; 
     organizationIds: number[];
   }) {
     const { name, superAdminIds, organizationIds } = departmentData;
   
-    if (!name || !Array.isArray(superAdminIds) || superAdminIds.length === 0 || !Array.isArray(organizationIds) || organizationIds.length === 0) {
-      throw new Error('Department name, at least one SuperAdmin ID, and at least one Organization ID are required.');
+    if (!name) {
+      throw new Error('Department name is required.');
     }
   
-    // Fetch multiple SuperAdmins
-    const superAdmins = await this.superAdminRepo.findByIds(superAdminIds);
-    if (superAdmins.length !== superAdminIds.length) {
-      throw new Error('One or more SuperAdmin IDs are invalid.');
-    }
-  
-    // Fetch Organizations
+    // ✅ Fetch and validate organizations
     const organizations = await this.organizationRepo.findByIds(organizationIds);
     if (organizations.length !== organizationIds.length) {
-      throw new Error('One or more Organization IDs are invalid.');
+      throw new Error(
+        `Some organization IDs do not exist. Found: ${organizations.map(o => o.id)}`
+      );
     }
   
-    // Check if department already exists
-    let department = await this.departmentRepo.findOne({ where: { name }, relations: ['superAdmin', 'organizations'] });
-  
-    if (department) {
-      // Update existing department
-      department.superAdmin = superAdmins; // ✅ Now an array
-      await this.departmentRepo.save(department);
-  
-      // Update associated organizations
-      await this.departmentRepo
-        .createQueryBuilder()
-        .relation(Department, 'organizations')
-        .of(department)
-        .addAndRemove(organizations, department.organizations || []);
-    } else {
-      // Create and save new department
-      department = this.departmentRepo.create({ name, superAdmin: superAdmins }); // ✅ Now an array
-      department = await this.departmentRepo.save(department);
-  
-      // Associate multiple Organizations with the Department
-      await this.departmentRepo
-        .createQueryBuilder()
-        .relation(Department, 'organizations')
-        .of(department)
-        .add(organizations);
+    // ✅ Fetch and validate SuperAdmin (expecting only one)
+    const superAdmins = await this.superAdminRepo.findByIds([superAdminIds]); // Wrap it in an array
+    if (superAdmins.length !== 1) {
+      throw new Error(`SuperAdmin with ID ${superAdminIds} not found.`);
     }
+    const superAdmin = superAdmins[0]; // Extract single SuperAdmin
   
-    // Reload the department to include relations
+    // ✅ Create department first (without relations)
+    let department = this.departmentRepo.create({ name, superAdmin });
+    department = await this.departmentRepo.save(department);
+  
+    // ✅ Now add organizations and save again
+    department.organizations = organizations;
+  
+    await this.departmentRepo.save(department);
+  
     return this.departmentRepo.findOne({
       where: { id: department.id },
       relations: ['superAdmin', 'organizations'],
     });
   }
+  
+  
+  
+  
+  
   
   
 

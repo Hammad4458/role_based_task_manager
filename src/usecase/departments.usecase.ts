@@ -8,7 +8,7 @@ export class DepartmentUseCase{
         private readonly departmentRepo:DepartmentRepository,
     ){}
     
-    async createDepartment(departmentData: { name: string; superAdminIds: number[]; organizationIds: number[] }) {
+    async createDepartment(departmentData: { name: string; superAdminIds: number; organizationIds: number[] }) {
         return await this.departmentRepo.createDepartment(departmentData);
       }
 

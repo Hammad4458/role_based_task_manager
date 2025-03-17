@@ -18,7 +18,6 @@ export class Organization implements IOrganization {
   superAdmins: SuperAdmin[];
 
   @ManyToMany(() => Department, (department) => department.organizations)
-  @JoinTable()
   departments: Department[];
 
   @OneToMany(() => User, (user) => user.organization)

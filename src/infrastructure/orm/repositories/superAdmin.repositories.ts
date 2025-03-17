@@ -22,6 +22,7 @@ export class SuperAdminRepository{
     async findByIds(ids: number[]) {
         return this.superAdminRepo.find({
             where: { id: In(ids) },
+            relations:['organizations']
         });
     }
 
