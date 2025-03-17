@@ -11,9 +11,12 @@ import { UserRepository } from "src/infrastructure/orm/repositories/users.reposi
 import { UserUseCase } from "src/usecase/user.usecase";
 import { BcryptService } from "src/infrastructure/services/bcrypt/bcrypt.module";
 import { BcryptModule } from "src/infrastructure/services/bcrypt/bcrypt.service";
+import { JwtService } from "src/infrastructure/services/jwt/jwt.service";
+import { JwtModule } from "src/infrastructure/services/jwt/jwt.module";
+
 
 @Module({
-  imports: [RepositoryModule,BcryptModule],
+  imports: [RepositoryModule,BcryptModule,JwtModule],
 })
 export class UseCaseProxyModule {
   static register(): DynamicModule {
@@ -40,9 +43,9 @@ export class UseCaseProxyModule {
         },
         {
           provide: USER_USECASE_PROXY,
-          inject: [UserRepository, BcryptService],
-          useFactory: (userRepo: UserRepository, bcryptService: BcryptService) =>
-            new UseCaseProxy(new UserUseCase(userRepo, bcryptService)),
+          inject: [UserRepository, BcryptService,JwtService],
+          useFactory: (userRepo: UserRepository, bcryptService: BcryptService,jwtService:JwtService) =>
+            new UseCaseProxy(new UserUseCase(userRepo, bcryptService,jwtService)),
         }
       ],
       exports: [SUPER_ADMIN_USECASE_PROXY,ORGANIZATION_USECASE_PROXY,DEPARTMENT_USECASE_PROXY,USER_USECASE_PROXY],

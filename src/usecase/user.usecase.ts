@@ -1,13 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { User, UserRole } from "src/infrastructure/orm/entities/users.entity";
 import { UserRepository } from "src/infrastructure/orm/repositories/users.repositories";
 import { BcryptService } from "src/infrastructure/services/bcrypt/bcrypt.module";
+import { JwtService } from "src/infrastructure/services/jwt/jwt.service";
 
 @Injectable()
 export class UserUseCase{
     constructor(
         private readonly userRepo:UserRepository,
         private readonly bcryptService:BcryptService,
+        private readonly jwtService:JwtService
     ){}
 
     async createUser(body: {
@@ -27,10 +29,10 @@ export class UserUseCase{
             name: body.name,
             email: body.email,
             password: hashedPassword,
-            role: body.role ?? UserRole.USER, // Default to USER if not provided
-            superAdminId: body.superAdmin, // ✅ Pass only the ID
-            organizationId: body.organization, // ✅ Pass only the ID
-            departmentId: body.department, // ✅ Pass only the ID
+            role: body.role ?? UserRole.USER, 
+            superAdminId: body.superAdmin, 
+            organizationId: body.organization, 
+            departmentId: body.department, 
         });
     }
 
@@ -41,6 +43,32 @@ export class UserUseCase{
         async getUsersByDepartment(departmentId: number): Promise<User[]> {
             return this.userRepo.getUsersByDepartment(departmentId);
         }
+
+        async validateUser(email: string, password: string) {
+            const user = await this.userRepo.getUserByEmail(email);
+        
+            if (!user) {
+              throw new UnauthorizedException('User not found');
+            }
+        
+            const isPasswordValid = await this.bcryptService.comparePassword(password, user.password);
+            if (!isPasswordValid) {
+              throw new UnauthorizedException('Invalid credentials');
+            }
+        
+            // ✅ Remove password before returning user
+            const { password: _, ...userWithoutPassword } = user;
+        
+            // 🔑 Generate JWT token
+            const payload = { email: user.email, id: user.id };
+            const access_token = this.jwtService.sign(payload);
+        
+            return {
+              user: userWithoutPassword,
+              access_token,
+            };
+        
+          }
         
     
 }

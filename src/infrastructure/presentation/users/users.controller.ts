@@ -11,6 +11,12 @@ export class UserController{
         private readonly userUseCaseProxy : UseCaseProxy<UserUseCase>
     ){}
 
+    @Post('login')
+  async login(@Body() body: { email: string,password: string; }) {
+    return this.userUseCaseProxy.useCase.validateUser(body.email, body.password)
+  }
+
+
     @Post('create')
     async createUser(
         @Body() body: { 
@@ -35,5 +41,7 @@ export class UserController{
     async getUsersByDepartment(@Param('departmentId') departmentId: number) {
     return this.userUseCaseProxy.useCase.getUsersByDepartment(Number(departmentId));
 }
+
+
     
 }

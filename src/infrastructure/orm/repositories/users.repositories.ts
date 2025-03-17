@@ -61,6 +61,14 @@ export class UserRepository{
         });
     }
 
+    async getUserByEmail(email: string): Promise<User | null> {
+        return await this.userRepo.findOne({ 
+            where: { email }, 
+            relations: ["superAdmin", "organization", "department"] 
+        });
+    }
+    
+
     async getUsersByDepartment(departmentId: number): Promise<User[]> {
         return this.userRepo.find({
             where: { department: { id: departmentId } },
