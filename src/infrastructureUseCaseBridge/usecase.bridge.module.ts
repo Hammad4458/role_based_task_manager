@@ -1,6 +1,6 @@
 import { DynamicModule, Module } from "@nestjs/common";
 import { RepositoryModule } from "src/infrastructure/orm/repositories/repositories.module";
-import { SUPER_ADMIN_USECASE_PROXY,ORGANIZATION_USECASE_PROXY, UseCaseProxy, DEPARTMENT_USECASE_PROXY, USER_USECASE_PROXY } from "./usecase.bridge.proxy";
+import { SUPER_ADMIN_USECASE_PROXY,ORGANIZATION_USECASE_PROXY, UseCaseProxy, DEPARTMENT_USECASE_PROXY, USER_USECASE_PROXY, TASK_USECASE_PROXY } from "./usecase.bridge.proxy";
 import { SuperAdminUseCase } from "src/usecase/superAdmin.usecase";
 import { SuperAdminRepository } from "src/infrastructure/orm/repositories/superAdmin.repositories";
 import { OrganizationRepository } from "src/infrastructure/orm/repositories/organizations.repositories";
@@ -13,6 +13,8 @@ import { BcryptService } from "src/infrastructure/services/bcrypt/bcrypt.module"
 import { BcryptModule } from "src/infrastructure/services/bcrypt/bcrypt.service";
 import { JwtService } from "src/infrastructure/services/jwt/jwt.service";
 import { JwtModule } from "src/infrastructure/services/jwt/jwt.module";
+import { TaskRepository } from "src/infrastructure/orm/repositories/tasks.repositories";
+import { TaskUseCase } from "src/usecase/tasks.usecase";
 
 
 @Module({
@@ -46,9 +48,20 @@ export class UseCaseProxyModule {
           inject: [UserRepository, BcryptService,JwtService],
           useFactory: (userRepo: UserRepository, bcryptService: BcryptService,jwtService:JwtService) =>
             new UseCaseProxy(new UserUseCase(userRepo, bcryptService,jwtService)),
+        },
+        {
+          provide: TASK_USECASE_PROXY,
+          inject: [TaskRepository],
+          useFactory: (taskRepository:TaskRepository) =>
+            new UseCaseProxy(new TaskUseCase(taskRepository)),
         }
       ],
-      exports: [SUPER_ADMIN_USECASE_PROXY,ORGANIZATION_USECASE_PROXY,DEPARTMENT_USECASE_PROXY,USER_USECASE_PROXY],
+      exports: [SUPER_ADMIN_USECASE_PROXY,
+        ORGANIZATION_USECASE_PROXY,
+        DEPARTMENT_USECASE_PROXY,
+        USER_USECASE_PROXY,
+        TASK_USECASE_PROXY
+      ],
     };
   }
 }

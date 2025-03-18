@@ -11,6 +11,7 @@ import {
 import { SuperAdmin } from './superAdmin.entity';
 import { Organization } from './organization.entity';
 import { User } from './users.entity';
+import { Task } from './tasks.entity';
 
 @Entity()
 export class Department implements IDepartment {
@@ -29,4 +30,8 @@ export class Department implements IDepartment {
 
   @OneToMany(() => User, (user) => user.department)
   users: User[];
+
+  @OneToMany(() => Task, (task) => task.department)
+  tasks: Task[];
+
 }

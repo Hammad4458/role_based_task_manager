@@ -10,12 +10,13 @@ import { SuperAdminRepository } from "./superAdmin.repositories";
 import { OrganizationRepository } from "./organizations.repositories";
 import { DepartmentRepository } from "./departments.repositories";
 import { UserRepository } from "./users.repositories";
+import { TaskRepository } from "./tasks.repositories";
 
 
 @Module({
     imports:[TypeOrmModule.forFeature([SuperAdmin,Organization,Department,User,Task]),DatabaseOrmConfigModule],
-    providers:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository], 
-    exports:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository]
+    providers:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository,TaskRepository], 
+    exports:[SuperAdminRepository,OrganizationRepository,DepartmentRepository,UserRepository,TaskRepository]
     
 })
 

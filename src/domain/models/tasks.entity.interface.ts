@@ -1,3 +1,4 @@
+import { Department } from "src/infrastructure/orm/entities/departments.entity";
 import { User } from "src/infrastructure/orm/entities/users.entity";
 
 export interface ITask {
@@ -7,7 +8,10 @@ export interface ITask {
     dueDate: Date;
     priority: 'LOW' | 'MEDIUM' | 'HIGH';
     status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+    department:Department;
     assignedUsers: User[];
+    admin:User,
+    manager:User,
     createdBy: User;
     createdAt: Date;
     updatedAt: Date;
