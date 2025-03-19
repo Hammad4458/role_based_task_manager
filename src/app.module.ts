@@ -5,6 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 
 
 @Module({
-  imports: [EnvConfigModule,ControllerModule,JwtModule],
+  imports: [EnvConfigModule,ControllerModule],
 })
 export class AppModule {}

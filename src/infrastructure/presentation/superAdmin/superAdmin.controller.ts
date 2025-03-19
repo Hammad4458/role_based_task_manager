@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Inject, Get } from "@nestjs/common";
+import { Controller, Post, Body, Inject, Get, UnauthorizedException, Headers } from "@nestjs/common";
 import { SUPER_ADMIN_USECASE_PROXY, UseCaseProxy } from "src/infrastructureUseCaseBridge/usecase.bridge.proxy";
 import { SuperAdminUseCase } from "src/usecase/superAdmin.usecase";
 
@@ -31,4 +31,20 @@ export class SuperAdminController {
   async getAllSuperAdmins() {
       return this.superAdminUseCaseProxy.useCase.getAllSuperAdmins();
   }
+
+   @Get('me')
+    async getUserFromToken(@Headers('authorization') authHeader: string) {
+      console.log('🚀 Route Hit: GET /me');
+  
+      if (!authHeader) {
+        throw new UnauthorizedException('Token is required');
+      }
+  
+      console.log('🟢 Authorization Header:', authHeader);
+  
+      const token = authHeader.replace('Bearer ', '').trim();
+      console.log('🟢 Extracted Token:', token);
+  
+      return await this.superAdminUseCaseProxy.useCase.getUserFromToken(token);
+    }
 }

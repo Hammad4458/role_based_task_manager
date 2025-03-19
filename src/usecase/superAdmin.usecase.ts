@@ -50,4 +50,29 @@ export class SuperAdminUseCase{
           access_token,
         };
       }
+
+      async getUserFromToken(token: string) {
+        try {
+          console.log('token:', token);
+          const decoded = this.jwtService.verify(token);
+          console.log('decoded', decoded);
+    
+          if (!decoded || !decoded.email || !decoded.id) {
+            throw new UnauthorizedException('Invalid token');
+          }
+    
+          // 🔍 Fetch user from DB
+          const user = await this.superAdminRepo.getUserByEmail(decoded.email);
+    
+          if (!user || user.id !== decoded.id) {
+            throw new UnauthorizedException('User not found');
+          }
+    
+          // ✅ Remove password before returning user
+          const { password, ...userWithoutPassword } = user;
+          return userWithoutPassword;
+        } catch (error) {
+          throw new UnauthorizedException('Invalid or expired token');
+        }
+      }
 }

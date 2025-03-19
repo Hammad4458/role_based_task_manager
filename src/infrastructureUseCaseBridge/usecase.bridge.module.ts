@@ -26,7 +26,7 @@ export class UseCaseProxyModule {
       module: UseCaseProxyModule,
       providers: [
         {
-          inject: [SuperAdminRepository], 
+          inject: [SuperAdminRepository,BcryptService,JwtService], 
           provide: SUPER_ADMIN_USECASE_PROXY,
           useFactory: (superAdminRepo: SuperAdminRepository, bcryptService: BcryptService,jwtService:JwtService) =>
             new UseCaseProxy(new SuperAdminUseCase(superAdminRepo,bcryptService,jwtService)),

@@ -10,7 +10,7 @@ export class OrganizationController{
     ){}
     @Post("create")
     async createOrganization(@Body() body: { name: string; superAdmin: number[] }) {
-        console.log(body); // ✅ Now body is defined
+        console.log(body); 
         return this.organizationUseCaseProxy.useCase.createOrganization(body);
     }
 
