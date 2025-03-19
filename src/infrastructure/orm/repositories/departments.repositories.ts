@@ -4,13 +4,15 @@ import { Repository, In } from 'typeorm';
 import { Department } from '../entities/departments.entity';
 import { SuperAdminRepository } from './superAdmin.repositories';
 import { OrganizationRepository } from './organizations.repositories';
+import { User } from '../entities/users.entity';
+import { UserRepository } from './users.repositories';
 
 @Injectable()
 export class DepartmentRepository {
   constructor(
     @InjectRepository(Department)
     private readonly departmentRepo: Repository<Department>,
-
+    private readonly userRepo: UserRepository,
     private readonly superAdminRepo: SuperAdminRepository,
     private readonly organizationRepo: OrganizationRepository,
   ) {}
@@ -56,12 +58,18 @@ export class DepartmentRepository {
     });
   }
   
-  
-  
-  
-  
-  
-  
+  async getUsersByDepartmentId(departmentId: number): Promise<User[]> {
+    const department = await this.departmentRepo.findOne({
+        where: { id: departmentId },
+        relations: ["users"], // Load users in the department
+    });
+
+    if (!department) {
+        throw new Error("Department not found");
+    }
+
+    return department.users;
+}
 
   async getAllDepartments(): Promise<Department[]> {
     return this.departmentRepo.find({

@@ -11,13 +11,10 @@ export class SuperAdminRepository{
         private readonly superAdminRepo : Repository<SuperAdmin>,
     ){}
 
-    async createSuperAdmin(user:Partial<ISuperAdmin>){
-        if (!user || Object.keys(user).length === 0) {
-            throw new Error('Super Admin data is missing');
-          }
-          const newUser = this.superAdminRepo.create(user);
-          return await this.superAdminRepo.save(newUser);
-    }
+    async createUser(data: { name: string; email: string; password: string }): Promise<SuperAdmin> {
+        const superAdmin = this.superAdminRepo.create(data);
+        return await this.superAdminRepo.save(superAdmin);
+      }
 
     async findByIds(ids: number[]) {
         return this.superAdminRepo.find({
@@ -36,5 +33,11 @@ export class SuperAdminRepository{
         });
     }
     
+     async getUserByEmail(email: string): Promise<SuperAdmin | null> {
+            return await this.superAdminRepo.findOne({ 
+                where: { email }, 
+                
+            });
+        }
     
 }

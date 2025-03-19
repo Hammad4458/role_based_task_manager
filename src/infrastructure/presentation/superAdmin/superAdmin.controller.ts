@@ -10,9 +10,22 @@ export class SuperAdminController {
   ) {}
 
   @Post('create')
-  async createSuperAdmin(@Body() body: any) {
-    return this.superAdminUseCaseProxy.useCase.createSuperAdmin(body);
+  async createSuperAdmin(
+    @Body() body: { name: string; email: string; password: string },
+  ) {
+    console.log(body);
+    return await this.superAdminUseCaseProxy.useCase.createUser(body);
   }
+
+
+  @Post('login')
+  async login(@Body() body: { email: string; password: string }) {
+    return this.superAdminUseCaseProxy.useCase.validateUser(
+      body.email,
+      body.password,
+    );
+  }
+
 
   @Get()
   async getAllSuperAdmins() {

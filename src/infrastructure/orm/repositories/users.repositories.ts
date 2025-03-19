@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User, UserRole } from "../entities/users.entity";
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { SuperAdmin } from "../entities/superAdmin.entity";
 import { Organization } from "../entities/organization.entity";
 import { Department } from "../entities/departments.entity";
@@ -57,34 +57,25 @@ export class UserRepository{
 
     async getAllUsers(): Promise<User[]> {
         return this.userRepo.find({
-            relations: ["superAdmin", "organization", "department"],
+            relations: ["superAdmin", "organization", "department", "tasksAssigned",
+            "tasksManaged",
+            "tasksCreated",
+            "adminTasks"],
         });
     }
 
     async getUserByEmail(email: string): Promise<User | null> {
         return await this.userRepo.findOne({ 
             where: { email }, 
-            relations: ["superAdmin", "organization", "department"] 
+            relations: ["superAdmin", "organization", "department" , "tasksAssigned",
+            "tasksManaged",
+            "tasksCreated",
+            "adminTasks"
+        ] 
         });
     }
-    async getUsersByDepartment(departmentId: number): Promise<User[]> {
-        return this.userRepo.find({
-            where: { department: { id: departmentId } },
-            relations: ["superAdmin", "organization", "department"],
-        });
-    }
-    async getSuperAdminById(adminId: number): Promise<User> {
-        const admin = await this.userRepo.findOne({ where: { id: adminId, role: UserRole.ADMIN } });
-        if (!admin) throw new NotFoundException('SuperAdmin with ADMIN role not found');
-        return admin;
-    }
-
-    // ✅ Get Manager by ID and Verify Role
-    async getManagerById(managerId: number): Promise<User> {
-        const manager = await this.userRepo.findOne({ where: { id: managerId, role: UserRole.MANAGER } });
-        if (!manager) throw new NotFoundException('Manager with MANAGER role not found');
-        return manager;
-    }
+   
+  
     async getCreatorById(creatorId: number): Promise<User> {
         const creator = await this.userRepo.findOne({ where: { id: creatorId, role: UserRole.MANAGER || UserRole.ADMIN } });
         if (!creator) throw new NotFoundException('Creator not found or invalid Role');
@@ -93,11 +84,16 @@ export class UserRepository{
 
     // ✅ Validate Assigned Users Exist
     async validateAssignedUsers(userIds: number[]): Promise<User[]> {
-        const users = await this.userRepo.findByIds(userIds);
+        const users = await this.userRepo.find({
+            where: { id: In(userIds) },
+        });
+    
         if (users.length !== userIds.length) {
-            throw new NotFoundException('One or more assigned users not found');
+            throw new NotFoundException("One or more assigned users not found");
         }
+    
         return users;
     }
 
+    
 }

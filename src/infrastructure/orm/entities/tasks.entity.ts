@@ -1,13 +1,5 @@
-import { ITask } from 'src/domain/models/tasks.entity.interface';
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  ManyToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  JoinTable,
+import { 
+  Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, CreateDateColumn, UpdateDateColumn, JoinTable 
 } from 'typeorm';
 import { User } from './users.entity';
 import { Department } from './departments.entity';
@@ -25,7 +17,7 @@ export enum TaskStatus {
 }
 
 @Entity()
-export class Task implements ITask {
+export class Task {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -47,16 +39,8 @@ export class Task implements ITask {
   @ManyToOne(() => Department, (department) => department.tasks, { nullable: false })
   department: Department;
 
-  // ✅ Many-to-One: Admin of Task (Inverse relation exists in User)
-  @ManyToOne(() => User, (user) => user.adminTasks, { nullable: false })
-  admin: User;
-
-  // ✅ Many-to-One: Manager of Task (Inverse relation exists in User)
-  @ManyToOne(() => User, (user) => user.tasksManaged, { nullable: false })
-  manager: User;
-
   // ✅ Many-to-Many: Assigned Users
-  @ManyToMany(() => User, (user) => user.tasksAssigned,{ cascade: true })
+  @ManyToMany(() => User, (user) => user.tasksAssigned, { cascade: true })
   @JoinTable()
   assignedUsers: User[];
 
@@ -70,4 +54,3 @@ export class Task implements ITask {
   @UpdateDateColumn()
   updatedAt: Date;
 }
-

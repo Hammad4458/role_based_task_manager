@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { User } from 'src/infrastructure/orm/entities/users.entity';
 import {
   DEPARTMENT_USECASE_PROXY,
   UseCaseProxy,
@@ -28,5 +29,10 @@ export class DepartmentController {
   @Get()
   async getAllDepartments() {
     return this.departmentUseCaseProxy.useCase.getAllDepartments();
+  }
+
+  @Get('/:departmentId/users')
+  async getUsersByDepartment(@Param('departmentId') departmentId: number): Promise<User[]> {
+    return this.departmentUseCaseProxy.useCase.getUsersByDepartmentId(departmentId);
   }
 }

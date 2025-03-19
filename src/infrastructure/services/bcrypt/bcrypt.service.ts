@@ -1,9 +1,18 @@
-import { Module } from "@nestjs/common";
-import { BcryptService } from "./bcrypt.module";
+import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
-@Module({
-    exports:[BcryptService],
-    providers:[BcryptService]
-})
+@Injectable()
+export class BcryptService {
+  private readonly saltRounds = 10; 
 
-export class BcryptModule{}
+  async hashPassword(password: string): Promise<string> {
+    console.log("password a gya")
+    return await bcrypt.hash(password, this.saltRounds);
+  }
+
+  async comparePassword(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
+  }
+
+  
+}

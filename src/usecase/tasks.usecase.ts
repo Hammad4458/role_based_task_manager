@@ -1,5 +1,5 @@
 
-import { Injectable } from '@nestjs/common';
+import {  Injectable } from '@nestjs/common';
 import { Task, TaskPriority, TaskStatus } from 'src/infrastructure/orm/entities/tasks.entity';
 import { TaskRepository } from 'src/infrastructure/orm/repositories/tasks.repositories';
 
@@ -13,9 +13,7 @@ export class TaskUseCase {
     dueDate: Date;
     priority: TaskPriority;
     status: TaskStatus;
-    admin: number; 
-    manager:number,
-    creator: number; 
+    creator: number;
     department: number; 
     assignedUsers: number[];
   }): Promise<Task> {
@@ -26,4 +24,10 @@ export class TaskUseCase {
   async getTasksByDepartment(departmentId: number): Promise<Task[]> {
     return this.taskRepo.getTasksByDepartment(departmentId);
   }
+
+
+  async getTasksByAssignedUser(userId: number): Promise<Task[]> {
+    return this.taskRepo.getTasksByAssignedUser(userId);
+  }
+  
 }

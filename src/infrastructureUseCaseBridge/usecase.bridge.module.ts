@@ -9,12 +9,12 @@ import { DepartmentRepository } from "src/infrastructure/orm/repositories/depart
 import { DepartmentUseCase } from "src/usecase/departments.usecase";
 import { UserRepository } from "src/infrastructure/orm/repositories/users.repositories";
 import { UserUseCase } from "src/usecase/user.usecase";
-import { BcryptService } from "src/infrastructure/services/bcrypt/bcrypt.module";
-import { BcryptModule } from "src/infrastructure/services/bcrypt/bcrypt.service";
 import { JwtService } from "src/infrastructure/services/jwt/jwt.service";
 import { JwtModule } from "src/infrastructure/services/jwt/jwt.module";
 import { TaskRepository } from "src/infrastructure/orm/repositories/tasks.repositories";
 import { TaskUseCase } from "src/usecase/tasks.usecase";
+import { BcryptModule } from "src/infrastructure/services/bcrypt/bcrypt.module";
+import { BcryptService } from "src/infrastructure/services/bcrypt/bcrypt.service";
 
 
 @Module({
@@ -28,8 +28,8 @@ export class UseCaseProxyModule {
         {
           inject: [SuperAdminRepository], 
           provide: SUPER_ADMIN_USECASE_PROXY,
-          useFactory: (superAdminRepo: SuperAdminRepository) =>
-            new UseCaseProxy(new SuperAdminUseCase(superAdminRepo)),
+          useFactory: (superAdminRepo: SuperAdminRepository, bcryptService: BcryptService,jwtService:JwtService) =>
+            new UseCaseProxy(new SuperAdminUseCase(superAdminRepo,bcryptService,jwtService)),
         },
         {
           inject:[OrganizationRepository],
