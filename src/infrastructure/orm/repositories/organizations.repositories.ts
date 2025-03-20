@@ -16,21 +16,21 @@ export class OrganizationRepository {
     async createOrganization(organizationData: { name: string; superAdmin: number }) {
         const { name, superAdmin } = organizationData;
     
-        if (!name || !Array.isArray(superAdmin) || superAdmin.length === 0) {
+        if (!name || !superAdmin ) {
             throw new Error("Organization name and at least one SuperAdmin ID are required.");
         }
     
         // Fetch multiple SuperAdmins
-        const superAdmins = await this.superAdminRepo.findByIds(superAdmin);
+        const superAdminEntity = await this.superAdminRepo.findOne(superAdmin);
     
-        if (superAdmins.length !== superAdmin.length) {
-            throw new Error("One or more SuperAdmin IDs are invalid.");
+        if (!superAdminEntity) {
+            throw new Error("Can't Find SuperAdmin");
         }
     
         // ✅ Create and save new organization with SuperAdmins
         let newOrganization = this.organizationRepo.create({ 
             name, 
-            superAdmins // ✅ Include superAdmins here
+            superAdmins:[superAdminEntity] // ✅ Include superAdmins here
         });
     
         newOrganization = await this.organizationRepo.save(newOrganization);

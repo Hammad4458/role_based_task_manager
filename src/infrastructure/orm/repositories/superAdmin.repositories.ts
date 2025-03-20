@@ -16,10 +16,10 @@ export class SuperAdminRepository{
         return await this.superAdminRepo.save(superAdmin);
       }
 
-    async findByIds(ids: number[]) {
-        return this.superAdminRepo.find({
-            where: { id: In(ids) },
-            relations:['organizations']
+      async findOne(id: number) {
+        return await this.superAdminRepo.findOne({
+            where: { id },
+            relations: ['organizations']
         });
     }
 
