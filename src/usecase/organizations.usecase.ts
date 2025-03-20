@@ -8,7 +8,7 @@ export class OrganizationUseCase{
         private readonly organizationRepo:OrganizationRepository,
     ){}
 
-    async createOrganization(orgData: { name: string; superAdmin: number[] }) {
+    async createOrganization(orgData: { name: string; superAdmin: number }) {
         return await this.organizationRepo.createOrganization(orgData);
     }
 

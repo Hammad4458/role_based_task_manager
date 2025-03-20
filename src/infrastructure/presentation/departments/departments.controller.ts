@@ -18,8 +18,8 @@ export class DepartmentController {
     @Body()
     body: {
       name: string;
-      superAdminIds: number;
-      organizationIds: number[];
+      superAdmin: number;
+      organizations: number[];
     },
   ) {
     console.log(body);

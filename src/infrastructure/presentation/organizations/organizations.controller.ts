@@ -9,7 +9,7 @@ export class OrganizationController{
         private readonly organizationUseCaseProxy:UseCaseProxy<OrganizationUseCase>,
     ){}
     @Post("create")
-    async createOrganization(@Body() body: { name: string; superAdmin: number[] }) {
+    async createOrganization(@Body() body: { name: string; superAdmin: number }) {
         console.log(body); 
         return this.organizationUseCaseProxy.useCase.createOrganization(body);
     }

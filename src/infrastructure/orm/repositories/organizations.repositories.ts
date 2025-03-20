@@ -13,7 +13,7 @@ export class OrganizationRepository {
         private readonly superAdminRepo: SuperAdminRepository, 
     ) {}
 
-    async createOrganization(organizationData: { name: string; superAdmin: number[] }) {
+    async createOrganization(organizationData: { name: string; superAdmin: number }) {
         const { name, superAdmin } = organizationData;
     
         if (!name || !Array.isArray(superAdmin) || superAdmin.length === 0) {

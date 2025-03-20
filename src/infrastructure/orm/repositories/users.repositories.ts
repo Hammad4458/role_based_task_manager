@@ -27,51 +27,67 @@ export class UserRepository{
         superAdminId: number;
         organizationId: number;
         departmentId: number;
-    }): Promise<User> {
-        
-        const superAdmin = await this.superAdminRepo.findOne({ where: { id: userData.superAdminId } });
+        managerId?: number;
+      }): Promise<User> {
+        const [superAdmin, organization, department] = await Promise.all([
+          this.superAdminRepo.findOne({ where: { id: userData.superAdminId } }),
+          this.organizationRepo.findOne({ where: { id: userData.organizationId } }),
+          this.departmentRepo.findOne({ where: { id: userData.departmentId } }),
+        ]);
+      
         if (!superAdmin) throw new NotFoundException("SuperAdmin not found");
-    
-        
-        const organization = await this.organizationRepo.findOne({ where: { id: userData.organizationId } });
         if (!organization) throw new NotFoundException("Organization not found");
-    
-        
-        const department = await this.departmentRepo.findOne({ where: { id: userData.departmentId } });
         if (!department) throw new NotFoundException("Department not found");
-    
-        
-        const newUser = this.userRepo.create({
-            name: userData.name,
-            email: userData.email,
-            password: userData.password,
-            role: userData.role,
-            superAdmin, 
-            organization, 
-            department, 
-        });
-    
-        // ✅ Save user in the database
-        return await this.userRepo.save(newUser);
-    }
+      
+        let manager: User | undefined = undefined;
 
-    async getAllUsers(): Promise<User[]> {
-        return this.userRepo.find({
-            relations: ["superAdmin", "organization", "department", "tasksAssigned",
-            "tasksManaged",
-            "tasksCreated",
-            "adminTasks"],
+      
+        // ✅ Ensure manager exists before assigning
+        if (userData.managerId) {
+            manager = (await this.userRepo.findOne({
+                where: { id: userData.managerId },
+                relations: ['manager'], // ✅ Load related manager
+              })) || undefined;
+      
+          if (!manager) {
+            throw new NotFoundException(`Manager with ID ${userData.managerId} not found`);
+          }
+        }
+      
+        // ✅ Use `create()` but explicitly assign manager 
+        const newUser = this.userRepo.create({
+          name: userData.name,
+          email: userData.email,
+          password: userData.password,
+          role: userData.role,
+          superAdmin,
+          organization,
+          department,
+          manager, // ✅ Now correctly assigned
         });
+      
+        return await this.userRepo.save(newUser); // ✅ Ensure manager is included in save()
+      }
+      
+      
+    
+
+      async getAllUsers(): Promise<User[]> {
+        return this.userRepo.createQueryBuilder("user")
+            .leftJoinAndSelect("user.superAdmin", "superAdmin")
+            .leftJoinAndSelect("user.organization", "organization")
+            .leftJoinAndSelect("user.department", "department")
+            .leftJoinAndSelect("user.manager", "manager")
+            .leftJoinAndSelect("manager.organization", "managerOrganization") // Load manager's organization
+            .leftJoinAndSelect("manager.department", "managerDepartment") // Load manager's department
+            .getMany();
     }
+    
 
     async getUserByEmail(email: string): Promise<User | null> {
         return await this.userRepo.findOne({ 
             where: { email }, 
-            relations: ["superAdmin", "organization", "department" , "tasksAssigned",
-            "tasksManaged",
-            "tasksCreated",
-            "adminTasks"
-        ] 
+            relations: ["superAdmin", "organization", "department" ] 
         });
     }
    
@@ -95,5 +111,16 @@ export class UserRepository{
         return users;
     }
 
-    
+    async findManagersByDepartment(departmentId: number): Promise<User[]> {
+        return await this.userRepo.find({
+          where: { 
+            department: { id: departmentId }, // Pass as an object reference
+            role: UserRole.MANAGER
+          },
+          relations: ["subordinates" ] 
+        });
+      }
+      
+
+      
 }

@@ -20,21 +20,22 @@ export class UserUseCase {
     superAdmin: number;
     organization: number;
     department: number;
+    manager?: number;
   }): Promise<User> {
-    // ✅ Hash the password before saving
     const hashedPassword = await this.bcryptService.hashPassword(body.password);
-
-    // ✅ Call repository with correct property names
+  
     return await this.userRepo.createUser({
       name: body.name,
       email: body.email,
       password: hashedPassword,
       role: body.role ?? UserRole.USER,
       superAdminId: body.superAdmin,
-      organizationId: body.organization,
-      departmentId: body.department,
+      organizationId: body.organization, 
+      departmentId: body.department, 
+      managerId: body.manager || undefined, 
     });
   }
+  
 
   async getAllUsers(): Promise<User[]> {
     return this.userRepo.getAllUsers();
@@ -92,4 +93,10 @@ export class UserUseCase {
       access_token,
     };
   }
+
+  async getManagersByDepartment(departmentId: number) {
+    return await this.userRepo.findManagersByDepartment(departmentId);
+  }
+  
+
 }

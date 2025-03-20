@@ -41,6 +41,7 @@ export class UserController {
       superAdmin: number;
       organization: number;
       department: number;
+      manager?:number;
     },
   ) {
     return await this.userUseCaseProxy.useCase.createUser(body);
@@ -50,8 +51,6 @@ export class UserController {
   async getAllUsers() {
     return this.userUseCaseProxy.useCase.getAllUsers();
   }
-
-
 
   @Get('me')
   async getUserFromToken(@Headers('authorization') authHeader: string) {
@@ -68,4 +67,10 @@ export class UserController {
 
     return await this.userUseCaseProxy.useCase.getUserFromToken(token);
   }
+
+  @Get('managers/:departmentId')
+  async getManagersByDepartment(@Param('departmentId') departmentId: number) {
+    return await this.userUseCaseProxy.useCase.getManagersByDepartment(departmentId);
+  }
+
 }

@@ -1,5 +1,10 @@
-import { 
-  Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, OneToMany 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  ManyToMany,
+  OneToMany,
 } from 'typeorm';
 import { SuperAdmin } from './superAdmin.entity';
 import { Organization } from './organization.entity';
@@ -29,27 +34,33 @@ export class User {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.users, { nullable: true, cascade: ['insert', 'update'] })
+  @ManyToOne(() => SuperAdmin, (superAdmin) => superAdmin.users, {
+    nullable: true,
+    cascade: ['insert', 'update'],
+  })
   superAdmin: SuperAdmin;
 
-  @ManyToOne(() => Organization, (organization) => organization.users, { cascade: ['insert', 'update'] })
+  @ManyToOne(() => Organization, (organization) => organization.users, {
+    cascade: ['insert', 'update'],
+  })
   organization: Organization;
 
-  @ManyToOne(() => Department, (department) => department.users, { cascade: ['insert', 'update'] })
+  @ManyToOne(() => Department, (department) => department.users, {
+    cascade: ['insert', 'update'],
+  })
   department: Department;
 
-  
-  @ManyToOne(() => User, (user) => user.subordinates, { nullable: true })
-  manager: User; 
-
+  @ManyToOne(() => User, (user) => user.subordinates, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  manager: User;
 
   @OneToMany(() => User, (user) => user.manager)
-  subordinates: User[]; 
+  subordinates: User[];
 
-  
   @OneToMany(() => Task, (task) => task.createdBy)
   tasksCreated: Task[];
-
 
   @ManyToMany(() => Task, (task) => task.assignedUsers)
   tasksAssigned: Task[];
