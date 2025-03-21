@@ -5,6 +5,7 @@ import {
   Headers,
   Inject,
   Param,
+  Patch,
   Post,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -60,10 +61,10 @@ export class UserController {
       throw new UnauthorizedException('Token is required');
     }
 
-    console.log('🟢 Authorization Header:', authHeader);
+    console.log('Authorization Header:', authHeader);
 
     const token = authHeader.replace('Bearer ', '').trim();
-    console.log('🟢 Extracted Token:', token);
+    console.log('Extracted Token:', token);
 
     return await this.userUseCaseProxy.useCase.getUserFromToken(token);
   }
@@ -71,6 +72,19 @@ export class UserController {
   @Get('managers/:departmentId')
   async getManagersByDepartment(@Param('departmentId') departmentId: number) {
     return await this.userUseCaseProxy.useCase.getManagersByDepartment(departmentId);
+  }
+
+  @Patch(':id')
+  async updateUser(
+    @Param('id') userId: number,
+    @Body()
+    body: {
+      name?: string;
+      email?: string;
+      role?: UserRole;
+    },
+  ) {
+    return await this.userUseCaseProxy.useCase.updateUser(userId, body);
   }
 
 }

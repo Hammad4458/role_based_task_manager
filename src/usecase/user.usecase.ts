@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { User, UserRole } from 'src/infrastructure/orm/entities/users.entity';
 import { UserRepository } from 'src/infrastructure/orm/repositories/users.repositories';
 import { BcryptService } from 'src/infrastructure/services/bcrypt/bcrypt.service';
@@ -96,6 +96,21 @@ export class UserUseCase {
 
   async getManagersByDepartment(departmentId: number) {
     return await this.userRepo.findManagersByDepartment(departmentId);
+  }
+
+  async updateUser(userId: number, updateData: { name?: string; email?: string; role?: UserRole }): Promise<User> {
+    // Fetch the user to ensure it exists
+    const user = await this.userRepo.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+  
+    // Update only the provided fields
+    if (updateData.name) user.name = updateData.name;
+    if (updateData.email) user.email = updateData.email;
+    if (updateData.role) user.role = updateData.role;
+  
+    return await this.userRepo.updateUser(user);
   }
   
 

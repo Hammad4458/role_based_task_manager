@@ -93,11 +93,13 @@ export class UserRepository{
    
   
     async getCreatorById(creatorId: number): Promise<User> {
-        const creator = await this.userRepo.findOne({ where: { id: creatorId, role: UserRole.MANAGER || UserRole.ADMIN } });
-        if (!creator) throw new NotFoundException('Creator not found or invalid Role');
-        return creator;
-    }
-
+      const creator = await this.userRepo.findOne({
+          where: { id: creatorId, role: In([UserRole.MANAGER, UserRole.ADMIN]) } // ✅ Fixed syntax
+      });
+  
+      if (!creator) throw new NotFoundException('Creator not found or invalid Role');
+      return creator;
+  }
     // ✅ Validate Assigned Users Exist
     async validateAssignedUsers(userIds: number[]): Promise<User[]> {
         const users = await this.userRepo.find({
@@ -121,6 +123,16 @@ export class UserRepository{
         });
       }
       
-
+      async getUserById(userId: number): Promise<User | null> {
+        return await this.userRepo.findOne({
+          where: { id: userId },
+          relations: ["superAdmin", "organization", "department", "subordinates"],
+        });
+      }
+      
+      async updateUser(user: User): Promise<User> {
+        return await this.userRepo.save(user); // Save the updated user entity
+      }
+      
       
 }

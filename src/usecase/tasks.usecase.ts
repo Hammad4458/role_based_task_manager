@@ -29,5 +29,24 @@ export class TaskUseCase {
   async getTasksByAssignedUser(userId: number): Promise<Task[]> {
     return this.taskRepo.getTasksByAssignedUser(userId);
   }
+
+  async getAllTasks(): Promise<Task[]> {
+          return this.taskRepo.getAllTasks();
+      }
+
+      async updateTask(
+        taskId: number,
+        updateData: {
+          title?: string;
+          description?: string;
+          dueDate?: Date;
+          priority?: TaskPriority;
+          status?: TaskStatus;
+          assignedUsers?: number[];
+        },
+      ): Promise<Task> {
+        return this.taskRepo.updateTask(taskId, updateData);
+      }
+  
   
 }

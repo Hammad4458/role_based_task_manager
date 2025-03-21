@@ -67,7 +67,7 @@ export class TaskRepository {
   
     return this.taskRepo.find({
       where: { department: { id: departmentId } },
-      relations: ['assignedUsers', 'createdBy', 'admin', 'department'],
+      relations: ['assignedUsers', 'createdBy', 'department'],
     });
   }
 
@@ -76,8 +76,58 @@ export class TaskRepository {
     return this.taskRepo
       .createQueryBuilder('task')
       .leftJoinAndSelect('task.assignedUsers', 'assignedUser')
-      .where('assignedUser.id = :userId', { userId })
+      .where(qb => {
+        const subQuery = qb
+          .subQuery()
+          .select('task.id')
+          .from(Task, 'task')
+          .leftJoin('task.assignedUsers', 'subAssignedUser')
+          .where('subAssignedUser.id = :userId')
+          .getQuery();
+        return 'task.id IN ' + subQuery;
+      })
+      .setParameter('userId', userId)
       .getMany();
   }
+  
+  
+
+  async getAllTasks(): Promise<Task[]> {
+          return this.taskRepo.find({
+              relations: ["department"], 
+          });
+      }
+
+      async updateTask(
+        taskId: number,
+        updateData: {
+          title?: string;
+          description?: string;
+          dueDate?: Date;
+          priority?: TaskPriority;
+          status?: TaskStatus;
+          assignedUsers?: number[];
+        },
+      ): Promise<Task> {
+        const task = await this.taskRepo.findOne({
+          where: { id: taskId },
+          relations: ['assignedUsers'],
+        });
+    
+        if (!task) throw new NotFoundException('Task not found');
+    
+        if (updateData.title) task.title = updateData.title;
+        if (updateData.description) task.description = updateData.description;
+        if (updateData.dueDate) task.dueDate = updateData.dueDate;
+        if (updateData.priority) task.priority = updateData.priority;
+        if (updateData.status) task.status = updateData.status;
+    
+        if (updateData.assignedUsers) {
+          const assignedUsers = await this.userRepository.validateAssignedUsers(updateData.assignedUsers);
+          task.assignedUsers = assignedUsers;
+        }
+    
+        return this.taskRepo.save(task);
+      }
   
 }

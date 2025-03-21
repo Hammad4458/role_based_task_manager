@@ -6,6 +6,7 @@ import {
   Param,
   Inject,
   BadRequestException,
+  Put,
 } from '@nestjs/common';
 import { ParseIntPipe } from '@nestjs/common';
 import {
@@ -41,6 +42,7 @@ export class TaskController {
       assignedUsers: number[];
     },
   ): Promise<Task> {
+    console.log("DATAAA",taskData);
     return this.taskUseCaseProxy.useCase.createTask(taskData);
   }
 
@@ -56,4 +58,27 @@ export class TaskController {
   async getTasksByAssignedUser(@Param('userId') userId: number) {
     return this.taskUseCaseProxy.useCase.getTasksByAssignedUser(userId);
   }
+
+  @Put('update/:taskId')
+  async updateTask(
+    @Param('taskId', ParseIntPipe) taskId: number,
+    @Body()
+    updateData: {
+      title?: string;
+      description?: string;
+      dueDate?: Date;
+      priority?: TaskPriority;
+      status?: TaskStatus;
+      assignedUsers?: number[];
+    },
+  ): Promise<Task> {
+    return this.taskUseCaseProxy.useCase.updateTask(taskId, updateData);
+  }
+
+  @Get()
+  async getAllTasks() {
+      return this.taskUseCaseProxy.useCase.getAllTasks();
+  }
+
+
 }
