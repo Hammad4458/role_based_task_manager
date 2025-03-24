@@ -8,12 +8,14 @@ import {
   Patch,
   Post,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { UserRole } from 'src/infrastructure/orm/entities/users.entity';
 import {
   UseCaseProxy,
   USER_USECASE_PROXY,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
+import { JwtAuthGuard } from 'src/infrastructure/guards/jwt-auth.guard';
 import { UserUseCase } from 'src/usecase/user.usecase';
 
 @Controller('users')
@@ -32,6 +34,7 @@ export class UserController {
   }
 
   @Post('create')
+ // @UseGuards(JwtAuthGuard)
   async createUser(
     @Body()
     body: {
@@ -49,11 +52,13 @@ export class UserController {
   }
 
   @Get()
+ // @UseGuards(JwtAuthGuard)
   async getAllUsers() {
     return this.userUseCaseProxy.useCase.getAllUsers();
   }
 
   @Get('me')
+  @UseGuards(JwtAuthGuard)
   async getUserFromToken(@Headers('authorization') authHeader: string) {
     console.log('🚀 Route Hit: GET /me');
 
@@ -70,11 +75,13 @@ export class UserController {
   }
 
   @Get('managers/:departmentId')
+  @UseGuards(JwtAuthGuard)
   async getManagersByDepartment(@Param('departmentId') departmentId: number) {
     return await this.userUseCaseProxy.useCase.getManagersByDepartment(departmentId);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async updateUser(
     @Param('id') userId: number,
     @Body()
