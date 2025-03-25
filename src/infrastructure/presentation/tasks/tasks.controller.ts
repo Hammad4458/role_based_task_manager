@@ -7,8 +7,10 @@ import {
   Inject,
   BadRequestException,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { ParseIntPipe } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/infrastructure/guards/jwt-auth.guard';
 import {
   Task,
   TaskPriority,
@@ -21,6 +23,7 @@ import {
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { TaskUseCase } from 'src/usecase/tasks.usecase';
 
+@UseGuards(JwtAuthGuard)
 @Controller('tasks')
 export class TaskController {
   constructor(

@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @Post('create')
- // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async createUser(
     @Body()
     body: {
@@ -52,7 +52,7 @@ export class UserController {
   }
 
   @Get()
- // @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async getAllUsers() {
     return this.userUseCaseProxy.useCase.getAllUsers();
   }

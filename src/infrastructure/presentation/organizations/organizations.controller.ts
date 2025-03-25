@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Inject, Post } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "src/infrastructure/guards/jwt-auth.guard";
 import { ORGANIZATION_USECASE_PROXY, UseCaseProxy } from "src/infrastructureUseCaseBridge/usecase.bridge.proxy";
 import { OrganizationUseCase } from "src/usecase/organizations.usecase";
 
+@UseGuards(JwtAuthGuard)
 @Controller("organization")
 export class OrganizationController{
     constructor(
