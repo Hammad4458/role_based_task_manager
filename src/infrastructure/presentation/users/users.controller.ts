@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -53,9 +54,20 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  async getAllUsers() {
-    return this.userUseCaseProxy.useCase.getAllUsers();
+  async getAllUsers(
+    @Query("name") name?: string,
+    @Query("role") role?: string,  // Role will be a string from query params
+    @Query("department") department?: string,
+    @Query("organization") organization?: string
+  ) {
+    return this.userUseCaseProxy.useCase.getAllUsers({
+      name,
+      role: role as UserRole,  // Convert role string to UserRole enum
+      department,
+      organization
+    });
   }
+  
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
@@ -78,6 +90,18 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async getManagersByDepartment(@Param('departmentId') departmentId: number) {
     return await this.userUseCaseProxy.useCase.getManagersByDepartment(departmentId);
+  }
+
+  @Get(':departmentId')
+  @UseGuards(JwtAuthGuard)
+  async getUsersByDepartment(@Param('departmentId') departmentId: number) {
+    return await this.userUseCaseProxy.useCase.getUsersByDepartment(departmentId);
+  }
+
+  @Get('assignedUsers/managerId/:managerId')
+  @UseGuards(JwtAuthGuard)
+  async getAssignUsersByManager(@Param('managerId') managerId:number){
+    return await  this.userUseCaseProxy.useCase.getAssignUsersByManager(managerId)
   }
 
   @Patch(':id')

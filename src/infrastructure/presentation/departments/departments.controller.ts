@@ -33,8 +33,5 @@ export class DepartmentController {
     return this.departmentUseCaseProxy.useCase.getAllDepartments();
   }
 
-  @Get('/:departmentId/users')
-  async getUsersByDepartment(@Param('departmentId') departmentId: number): Promise<User[]> {
-    return this.departmentUseCaseProxy.useCase.getUsersByDepartmentId(departmentId);
-  }
+  
 }

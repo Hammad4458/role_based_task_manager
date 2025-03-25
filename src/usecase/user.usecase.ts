@@ -37,8 +37,8 @@ export class UserUseCase {
   }
   
 
-  async getAllUsers(): Promise<User[]> {
-    return this.userRepo.getAllUsers();
+  async getAllUsers(filters: { name?: string; role?: UserRole; department?: string; organization?: string }): Promise<User[]> {
+    return this.userRepo.getAllUsers(filters);
   }
 
   async getUserFromToken(token: string) {
@@ -96,6 +96,14 @@ export class UserUseCase {
 
   async getManagersByDepartment(departmentId: number) {
     return await this.userRepo.findManagersByDepartment(departmentId);
+  }
+
+  async getUsersByDepartment(departmentId:number){
+    return await this.userRepo.getUsersByDepartment(departmentId);
+  }
+
+  async getAssignUsersByManager(managerId: number){
+    return await this.userRepo.getAssignUsersByManager(managerId);
   }
 
   async updateUser(userId: number, updateData: { name?: string; email?: string; role?: UserRole }): Promise<User> {

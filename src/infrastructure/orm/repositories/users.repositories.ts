@@ -69,19 +69,22 @@ export class UserRepository{
         return await this.userRepo.save(newUser); // ✅ Ensure manager is included in save()
       }
       
-      
-    
 
-      async getAllUsers(): Promise<User[]> {
-        return this.userRepo.createQueryBuilder("user")
-            .leftJoinAndSelect("user.superAdmin", "superAdmin")
+      async getAllUsers(filters: { name?: string; role?: UserRole; department?: string; organization?: string }): Promise<User[]> {
+        const { name, role, department, organization } = filters;
+    
+        const query = this.userRepo.createQueryBuilder("user")
             .leftJoinAndSelect("user.organization", "organization")
-            .leftJoinAndSelect("user.department", "department")
-            .leftJoinAndSelect("user.manager", "manager")
-            .leftJoinAndSelect("manager.organization", "managerOrganization") // Load manager's organization
-            .leftJoinAndSelect("manager.department", "managerDepartment") // Load manager's department
-            .getMany();
+            .leftJoinAndSelect("user.department", "department");
+    
+        if (name) query.andWhere("user.name ILIKE :name", { name: `%${name}%` });
+        if (role) query.andWhere("user.role = :role", { role });
+        if (department) query.andWhere("department.name = :department", { department });
+        if (organization) query.andWhere("organization.name = :organization", { organization });
+    
+        return query.getMany();
     }
+    
     
 
     async getUserByEmail(email: string): Promise<User | null> {
@@ -113,6 +116,21 @@ export class UserRepository{
         return users;
     }
 
+    async getUsersByDepartment(departmentId: number): Promise<User[]> {
+      const users = await this.userRepo.find({
+          where: {
+              department: { id: departmentId },
+          },
+          relations: ["department", "organization"], // Ensure relations load properly
+      });
+  
+      if (!users.length) {
+          throw new Error("No users found for this department");
+      }
+  
+      return users.filter(user => user.role === UserRole.USER);
+  }
+  
     async findManagersByDepartment(departmentId: number): Promise<User[]> {
         return await this.userRepo.find({
           where: { 
@@ -121,6 +139,14 @@ export class UserRepository{
           },
           relations: ["subordinates" ] 
         });
+      }
+      async getAssignUsersByManager(managerId:number): Promise<User[]> {
+        return await this.userRepo.find({
+          where:{
+            manager:{id: managerId},
+          },
+          relations:["subordinates","organization","department"]
+        })
       }
       
       async getUserById(userId: number): Promise<User | null> {

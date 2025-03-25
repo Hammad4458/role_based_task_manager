@@ -18,7 +18,5 @@ export class DepartmentUseCase{
         return this.departmentRepo.getAllDepartments();
     }
 
-    async getUsersByDepartmentId(departmentId: number): Promise<User[]> {
-        return this.departmentRepo.getUsersByDepartmentId(departmentId);
-      }
+    
 }
