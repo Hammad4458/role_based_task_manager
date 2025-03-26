@@ -138,6 +138,21 @@ export class UserRepository {
     return users.filter((user) => user.role === UserRole.USER);
   }
 
+  async getAdminsByDepartment(departmentId: number): Promise<User[]> {
+    const users = await this.userRepo.find({
+      where: {
+        department: { id: departmentId },
+      },
+      relations: ['department', 'organization','manager'], 
+    });
+
+    if (!users.length) {
+      throw new Error('No users found for this department');
+    }
+
+    return users.filter((user) => user.role === UserRole.ADMIN);
+  }
+
   async findManagersByDepartment(departmentId: number): Promise<User[]> {
     return await this.userRepo.find({
       where: {

@@ -100,6 +100,10 @@ export class UserUseCase {
     return await this.userRepo.getUsersByDepartment(departmentId);
   }
 
+  async getAdminsByDepartment(departmentId:number){
+    return await this.userRepo.getAdminsByDepartment(departmentId)
+  }
+
   async getAssignUsersByManager(managerId: number){
     return await this.userRepo.getAssignUsersByManager(managerId);
   }

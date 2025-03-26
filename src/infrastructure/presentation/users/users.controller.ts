@@ -99,6 +99,12 @@ export class UserController {
     return await this.userUseCaseProxy.useCase.getUsersByDepartment(departmentId);
   }
 
+  @Get('admins/:departmentId')
+  @UseGuards(JwtAuthGuard)
+  async getAdminsByDepartment(@Param('departmentId') departmentId: number) {
+    return await this.userUseCaseProxy.useCase.getAdminsByDepartment(departmentId);
+  }
+
   @Get('assignedUsers/managerId/:managerId')
   @UseGuards(JwtAuthGuard)
   async getAssignUsersByManager(@Param('managerId') managerId:number){
