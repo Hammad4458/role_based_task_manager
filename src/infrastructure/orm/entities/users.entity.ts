@@ -41,10 +41,10 @@ export class User {
   superAdmin: SuperAdmin;
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
-    
+    nullable: true,
     cascade: ['insert', 'update'],
   })
-  organization: Organization;
+  organization: Organization | null;
 
   @ManyToOne(() => Department, (department) => department.users, {
     cascade: ['insert', 'update'],
