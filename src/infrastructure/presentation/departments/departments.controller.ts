@@ -21,7 +21,7 @@ export class DepartmentController {
     body: {
       name: string;
       superAdmin: number;
-      organizations: number[];
+      
     },
   ) {
    

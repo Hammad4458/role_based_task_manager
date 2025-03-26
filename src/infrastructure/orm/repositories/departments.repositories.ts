@@ -19,21 +19,14 @@ export class DepartmentRepository {
   async createDepartment(departmentData: {
     name: string;
     superAdmin: number; 
-    organizations: number[];
+    organizations?: number[];
   }) {
-    const { name, superAdmin, organizations } = departmentData;
+    const { name, superAdmin } = departmentData;
   
     if (!name) {
       throw new Error('Department name is required.');
     }
   
-    // ✅ Fetch and validate organizations
-    const organizationEntities = await this.organizationRepo.findByIds(organizations);
-    if (organizationEntities.length !== organizations.length) {
-      throw new Error(
-        `Some organization IDs do not exist. Found: ${organizationEntities.map(o => o.id)}`
-      );
-    }
   
     // ✅ Fetch and validate SuperAdmin
     const superAdminEntity = await this.superAdminRepo.findById(superAdmin);
@@ -45,14 +38,13 @@ export class DepartmentRepository {
     let department = this.departmentRepo.create({
       name,
       superAdmin: superAdminEntity,
-      organizations: organizationEntities,
     });
 
     department = await this.departmentRepo.save(department);
   
     return this.departmentRepo.findOne({
       where: { id: department.id },
-      relations: ['superAdmin', 'organizations'],
+      relations: ['superAdmin'],
     });
   }
   

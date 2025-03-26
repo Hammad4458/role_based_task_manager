@@ -14,6 +14,15 @@ export class OrganizationUseCase{
 
      async getAllOrganiations(): Promise<Organization[]> {
             return this.organizationRepo.getAllOrganizations();
-        }
-    
+    }
+
+    async assignDepartments(orgId: number, departmentIds: number[]): Promise<Organization> {
+        console.log(orgId,departmentIds);
+        return this.organizationRepo.assignDepartments(orgId, departmentIds);
+    }
+
+    async updateDepartments(orgId: number, departmentIds: number[]) {
+        return this.organizationRepo.updateDepartments(orgId, departmentIds);
+      }
+      
 }

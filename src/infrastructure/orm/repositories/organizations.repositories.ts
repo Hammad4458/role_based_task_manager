@@ -3,13 +3,19 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, In } from "typeorm";
 import { Organization } from "../entities/organization.entity"; 
 import { SuperAdminRepository } from "./superAdmin.repositories";
+import { DepartmentRepository } from "./departments.repositories";
+import { Department } from "../entities/departments.entity";
+import { User } from "../entities/users.entity";
 
 @Injectable()
 export class OrganizationRepository {
     constructor(
         @InjectRepository(Organization)
         private readonly organizationRepo: Repository<Organization>,
-
+        @InjectRepository(Department)
+            private readonly departmentRepo: Repository<Department>,
+            @InjectRepository(Department)
+            private readonly userRepo: Repository<User>,
         private readonly superAdminRepo: SuperAdminRepository, 
     ) {}
 
@@ -30,14 +36,11 @@ export class OrganizationRepository {
         // ✅ Create and save new organization with SuperAdmins
         let newOrganization = this.organizationRepo.create({ 
             name, 
-            superAdmins:[superAdminEntity] // ✅ Include superAdmins here
+            superAdmins:[superAdminEntity] 
         });
     
         newOrganization = await this.organizationRepo.save(newOrganization);
     
-        // ✅ No need to separately associate superAdmins after saving
-    
-        // Reload the organization to include relations
         return this.organizationRepo.findOne({
             where: { id: newOrganization.id },
             relations: ["superAdmins"],
@@ -57,5 +60,64 @@ export class OrganizationRepository {
             relations: ["superAdmins",  "users", "departments"],
         });
     }
+
+    async assignDepartments(orgId: number, departmentIds: number[]): Promise<Organization> {
+        const organization = await this.organizationRepo.findOne({
+          where: { id: orgId },
+          relations: ['departments'], // Load existing relations
+        });
+    
+        if (!organization) {
+          throw new Error('Organization not found');
+        }
+    
+        const departments = await this.departmentRepo.find({
+            where: { id: In(departmentIds) },
+          });
+          
+    
+        // Assign departments to organization
+        organization.departments = [...organization.departments, ...departments];
+        
+        // Save organization with new departments
+        return this.organizationRepo.save(organization);
+      }
+
+      async updateDepartments(orgId: number, departmentIds: number[]): Promise<Organization> {
+        // Fetch the organization along with its departments and users
+        const organization = await this.organizationRepo.findOne({
+          where: { id: orgId },
+          relations: ['departments', 'users'],
+        });
+      
+        if (!organization) {
+          throw new Error('Organization not found');
+        }
+      
+        // Fetch the departments to be assigned
+        const newDepartments = await this.departmentRepo.findByIds(departmentIds);
+      
+        // Find users that belong to the departments being removed
+        const removedDepartments = organization.departments.filter(
+          (dep) => !departmentIds.includes(dep.id)
+        );
+      
+        const usersToRemove = organization.users.filter((user) =>
+          removedDepartments.some((dep) => dep.id === user.department.id)
+        );
+      
+        // Remove the users from the organization
+        for (const user of usersToRemove) {
+          user.organization = null; // Unassign the user from the organization
+          await this.userRepo.save(user);
+        }
+      
+        // Update the organization's departments
+        organization.departments = newDepartments;
+        
+        return this.organizationRepo.save(organization);
+      }
+      
+      
     
 }

@@ -41,6 +41,7 @@ export class User {
   superAdmin: SuperAdmin;
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
+    
     cascade: ['insert', 'update'],
   })
   organization: Organization;
