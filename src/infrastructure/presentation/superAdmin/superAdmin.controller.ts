@@ -27,7 +27,7 @@ export class SuperAdminController {
   async createSuperAdmin(
     @Body() body: { name: string; email: string; password: string },
   ) {
-    console.log(body);
+   
     return await this.superAdminUseCaseProxy.useCase.createUser(body);
   }
 
@@ -49,16 +49,15 @@ export class SuperAdminController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getUserFromToken(@Headers('authorization') authHeader: string) {
-    console.log('🚀 Route Hit: GET /me');
+    
 
     if (!authHeader) {
       throw new UnauthorizedException('Token is required');
     }
 
-    console.log('🟢 Authorization Header:', authHeader);
 
     const token = authHeader.replace('Bearer ', '').trim();
-    console.log('🟢 Extracted Token:', token);
+    
 
     return await this.superAdminUseCaseProxy.useCase.getUserFromToken(token);
   }

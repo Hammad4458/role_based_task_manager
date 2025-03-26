@@ -6,7 +6,6 @@ export class BcryptService {
   private readonly saltRounds = 10; 
 
   async hashPassword(password: string): Promise<string> {
-    console.log("password a gya")
     return await bcrypt.hash(password, this.saltRounds);
   }
 

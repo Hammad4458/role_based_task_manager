@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-console.log('Database Type:', process.env.TYPE);
+
 
 export const AppDataSource = new DataSource({
   type: 'postgres',

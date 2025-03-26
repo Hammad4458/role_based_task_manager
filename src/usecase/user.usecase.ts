@@ -17,10 +17,10 @@ export class UserUseCase {
     email: string;
     role?: UserRole;
     password: string;
-    superAdmin: number;
-    organization: number;
-    department: number;
-    manager?: number;
+    superAdminId: number;  
+    organizationId: number; 
+    departmentId: number;   
+    managerId?: number;     
   }): Promise<User> {
     const hashedPassword = await this.bcryptService.hashPassword(body.password);
   
@@ -29,23 +29,21 @@ export class UserUseCase {
       email: body.email,
       password: hashedPassword,
       role: body.role ?? UserRole.USER,
-      superAdminId: body.superAdmin,
-      organizationId: body.organization, 
-      departmentId: body.department, 
-      managerId: body.manager || undefined, 
+      superAdminId: body.superAdminId,  // 🔥 Use correct names
+      organizationId: body.organizationId,
+      departmentId: body.departmentId,
+      managerId: body.managerId || undefined,
     });
   }
   
-
-  async getAllUsers(filters: { name?: string; role?: UserRole; department?: string; organization?: string }): Promise<User[]> {
+  async getAllUsers(filters: { name?: string; role?: string; department?: string; organization?: string }): Promise<User[]> {
     return this.userRepo.getAllUsers(filters);
   }
 
   async getUserFromToken(token: string) {
     try {
-      console.log('token:', token);
+      
       const decoded = this.jwtService.verify(token);
-      console.log('decoded', decoded);
 
       if (!decoded || !decoded.email || !decoded.id) {
         throw new UnauthorizedException('Invalid token');
@@ -106,20 +104,33 @@ export class UserUseCase {
     return await this.userRepo.getAssignUsersByManager(managerId);
   }
 
-  async updateUser(userId: number, updateData: { name?: string; email?: string; role?: UserRole }): Promise<User> {
-    // Fetch the user to ensure it exists
-    const user = await this.userRepo.getUserById(userId);
-    if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+  async updateUser(
+    userId: number,
+    body: {
+      name?: string;
+      email?: string;
+      role?: UserRole;
+      password?: string;
+      superAdminId?: number;
+      organizationId?: number;
+      departmentId?: number;
+      managerId?: number;
+    },
+  ): Promise<User> {
+   
+  
+    // Hash password if provided
+    let hashedPassword: string | undefined = undefined;
+    if (body.password) {
+      hashedPassword = await this.bcryptService.hashPassword(body.password);
     }
   
-    // Update only the provided fields
-    if (updateData.name) user.name = updateData.name;
-    if (updateData.email) user.email = updateData.email;
-    if (updateData.role) user.role = updateData.role;
-  
-    return await this.userRepo.updateUser(user);
+    return await this.userRepo.updateUser(userId, {
+      ...body,
+      password: hashedPassword, 
+    });
   }
+  
   
 
 }

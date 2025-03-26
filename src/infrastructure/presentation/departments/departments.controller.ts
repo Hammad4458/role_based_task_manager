@@ -24,7 +24,7 @@ export class DepartmentController {
       organizations: number[];
     },
   ) {
-    console.log(body);
+   
     return this.departmentUseCaseProxy.useCase.createDepartment(body);
   }
 

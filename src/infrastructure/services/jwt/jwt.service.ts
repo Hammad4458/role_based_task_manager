@@ -21,7 +21,6 @@ export class JwtService {
       const secretKey = this.configService.get('jwtConfig').key;
       const decoded = this.nestJwtService.verify(token, { secret: secretKey });
       
-      console.log("Decoded Token:", decoded); 
   
       return decoded;
     } catch (error) {

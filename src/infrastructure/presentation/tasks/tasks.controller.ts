@@ -45,7 +45,7 @@ export class TaskController {
       assignedUsers: number[];
     },
   ): Promise<Task> {
-    console.log("DATAAA",taskData);
+    
     return this.taskUseCaseProxy.useCase.createTask(taskData);
   }
 

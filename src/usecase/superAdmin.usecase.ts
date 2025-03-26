@@ -13,9 +13,8 @@ export class SuperAdminUseCase{
     ){}
 
     async createUser(body: { name: string; email: string; password: string }) {
-        console.log("2nd Time");
+        
         const hashedPassword = await this.bcryptService.hashPassword(body.password);
-        console.log(hashedPassword);
         return await this.superAdminRepo.createUser({ ...body, password: hashedPassword });
       }
 
@@ -53,9 +52,8 @@ export class SuperAdminUseCase{
 
       async getUserFromToken(token: string) {
         try {
-          console.log('token:', token);
+          
           const decoded = this.jwtService.verify(token);
-          console.log('decoded', decoded);
     
           if (!decoded || !decoded.email || !decoded.id) {
             throw new UnauthorizedException('Invalid token');

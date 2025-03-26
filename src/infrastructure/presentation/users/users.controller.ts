@@ -43,14 +43,16 @@ export class UserController {
       email: string;
       role?: UserRole;
       password: string;
-      superAdmin: number;
-      organization: number;
-      department: number;
-      manager?:number;
+      superAdminId: number;  
+      organizationId: number; 
+      departmentId: number;   
+      managerId?: number;     
     },
   ) {
+    
     return await this.userUseCaseProxy.useCase.createUser(body);
   }
+  
 
   @Get()
   @UseGuards(JwtAuthGuard)
@@ -62,7 +64,7 @@ export class UserController {
   ) {
     return this.userUseCaseProxy.useCase.getAllUsers({
       name,
-      role: role as UserRole,  // Convert role string to UserRole enum
+      role,  // Convert role string to UserRole enum
       department,
       organization
     });
@@ -72,16 +74,15 @@ export class UserController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getUserFromToken(@Headers('authorization') authHeader: string) {
-    console.log('🚀 Route Hit: GET /me');
+   
 
     if (!authHeader) {
       throw new UnauthorizedException('Token is required');
     }
 
-    console.log('Authorization Header:', authHeader);
 
     const token = authHeader.replace('Bearer ', '').trim();
-    console.log('Extracted Token:', token);
+   
 
     return await this.userUseCaseProxy.useCase.getUserFromToken(token);
   }
@@ -113,9 +114,16 @@ export class UserController {
       name?: string;
       email?: string;
       role?: UserRole;
+      password?: string;
+      superAdminId?: number;
+      organizationId?: number;
+      departmentId?: number;
+      managerId?: number;
     },
   ) {
+   
     return await this.userUseCaseProxy.useCase.updateUser(userId, body);
   }
+  
 
 }
