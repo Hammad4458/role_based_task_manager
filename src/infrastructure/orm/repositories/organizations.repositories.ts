@@ -6,9 +6,10 @@ import { SuperAdminRepository } from "./superAdmin.repositories";
 import { DepartmentRepository } from "./departments.repositories";
 import { Department } from "../entities/departments.entity";
 import { User } from "../entities/users.entity";
+import { IOrganizationRepository } from "src/domain/repositories/organizations.repo.interface";
 
 @Injectable()
-export class OrganizationRepository {
+export class OrganizationRepository implements IOrganizationRepository {
     constructor(
         @InjectRepository(Organization)
         private readonly organizationRepo: Repository<Organization>,
@@ -64,7 +65,7 @@ export class OrganizationRepository {
     async assignDepartments(orgId: number, departmentIds: number[]): Promise<Organization> {
         const organization = await this.organizationRepo.findOne({
           where: { id: orgId },
-          relations: ['departments'], // Load existing relations
+          relations: ['departments'], 
         });
     
         if (!organization) {

@@ -14,6 +14,8 @@ import {
   UseCaseProxy,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { SuperAdminUseCase } from 'src/usecase/superAdmin.usecase';
+import { CreateSuperAdminDto, LoginSuperAdminDto, TokenDto } from './superAdmin.dto';
+
 
 @Controller('super-admin')
 export class SuperAdminController {
@@ -24,19 +26,13 @@ export class SuperAdminController {
 
   @Post('create')
   @UseGuards(JwtAuthGuard)
-  async createSuperAdmin(
-    @Body() body: { name: string; email: string; password: string },
-  ) {
-   
+  async createSuperAdmin(@Body() body: CreateSuperAdminDto) {
     return await this.superAdminUseCaseProxy.useCase.createUser(body);
   }
 
   @Post('login')
-  async login(@Body() body: { email: string; password: string }) {
-    return this.superAdminUseCaseProxy.useCase.validateUser(
-      body.email,
-      body.password,
-    );
+  async login(@Body() body: LoginSuperAdminDto) {
+    return this.superAdminUseCaseProxy.useCase.validateUser(body.email, body.password);
   }
 
   @Get()
@@ -45,20 +41,14 @@ export class SuperAdminController {
     return this.superAdminUseCaseProxy.useCase.getAllSuperAdmins();
   }
 
-  
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getUserFromToken(@Headers('authorization') authHeader: string) {
-    
-
+  async getUserFromToken(@Headers() headers: TokenDto) {
+    const authHeader = headers.authorization;
     if (!authHeader) {
       throw new UnauthorizedException('Token is required');
     }
-
-
     const token = authHeader.replace('Bearer ', '').trim();
-    
-
     return await this.superAdminUseCaseProxy.useCase.getUserFromToken(token);
   }
 }

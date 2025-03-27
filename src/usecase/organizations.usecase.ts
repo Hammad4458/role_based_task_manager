@@ -18,7 +18,7 @@ export class OrganizationUseCase {
     orgId: number,
     departmentIds: number[],
   ): Promise<Organization> {
-    console.log(orgId, departmentIds);
+   
     return this.organizationRepo.assignDepartments(orgId, departmentIds);
   }
 

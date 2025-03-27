@@ -14,6 +14,7 @@ import {
   UseCaseProxy,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { OrganizationUseCase } from 'src/usecase/organizations.usecase';
+import { AssignDepartmentsDto, CreateOrganizationDto, UpdateDepartmentsDto } from './organizations.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('organization')
@@ -22,8 +23,9 @@ export class OrganizationController {
     @Inject(ORGANIZATION_USECASE_PROXY)
     private readonly organizationUseCaseProxy: UseCaseProxy<OrganizationUseCase>,
   ) {}
+
   @Post('create')
-  async createOrganization(@Body() body: { name: string; superAdmin: number }) {
+  async createOrganization(@Body() body: CreateOrganizationDto) {
     return this.organizationUseCaseProxy.useCase.createOrganization(body);
   }
 
@@ -35,24 +37,22 @@ export class OrganizationController {
   @Post(':id/assign-departments')
   async assignDepartments(
     @Param('id') orgId: number,
-    @Body('departmentIds') departmentIds: number[],
+    @Body() body: AssignDepartmentsDto,
   ) {
     return this.organizationUseCaseProxy.useCase.assignDepartments(
       orgId,
-      departmentIds,
+      body.departmentIds,
     );
   }
 
-  // Update departments for an organization
   @Put(':id/update-departments')
   async updateDepartments(
     @Param('id') orgId: number,
-    @Body('departmentIds') departmentIds: number[],
+    @Body() body: UpdateDepartmentsDto,
   ) {
     return this.organizationUseCaseProxy.useCase.updateDepartments(
       orgId,
-      departmentIds,
+      body.departmentIds,
     );
   }
-
 }

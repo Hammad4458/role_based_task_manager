@@ -2,10 +2,10 @@ import {  Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SuperAdmin } from "../entities/superAdmin.entity";
 import { Repository,In } from "typeorm";
-import { ISuperAdmin } from "src/domain/models/superAdmin.entity.interface";
+import { ISuperAdminRepository } from "src/domain/repositories/superAdmin.repo.interface";
 
 @Injectable()
-export class SuperAdminRepository{
+export class SuperAdminRepository implements ISuperAdminRepository{
     constructor(
         @InjectRepository(SuperAdmin)
         private readonly superAdminRepo : Repository<SuperAdmin>,

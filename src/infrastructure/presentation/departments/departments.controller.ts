@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/infrastructure/guards/jwt-auth.guard';
-import { User } from 'src/infrastructure/orm/entities/users.entity';
 import {
   DEPARTMENT_USECASE_PROXY,
   UseCaseProxy,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { DepartmentUseCase } from 'src/usecase/departments.usecase';
+import { CreateDepartmentDto } from './departments.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('department')
@@ -16,15 +16,7 @@ export class DepartmentController {
   ) {}
 
   @Post('create')
-  async createDepartment(
-    @Body()
-    body: {
-      name: string;
-      superAdmin: number;
-      
-    },
-  ) {
-   
+  async createDepartment(@Body() body: CreateDepartmentDto) {
     return this.departmentUseCaseProxy.useCase.createDepartment(body);
   }
 
@@ -32,6 +24,4 @@ export class DepartmentController {
   async getAllDepartments() {
     return this.departmentUseCaseProxy.useCase.getAllDepartments();
   }
-
-  
 }

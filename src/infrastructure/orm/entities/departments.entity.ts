@@ -25,13 +25,11 @@ export class Department implements IDepartment {
   superAdmin: SuperAdmin;
 
   @ManyToMany(() => Organization, (organization) => organization.departments)
-  @JoinTable()
-  organizations: Organization[]
+  organizations: Organization[];
 
   @OneToMany(() => User, (user) => user.department)
   users: User[];
 
   @OneToMany(() => Task, (task) => task.department)
   tasks: Task[];
-
 }

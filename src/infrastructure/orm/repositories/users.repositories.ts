@@ -5,9 +5,10 @@ import { In, Repository } from 'typeorm';
 import { SuperAdmin } from '../entities/superAdmin.entity';
 import { Organization } from '../entities/organization.entity';
 import { Department } from '../entities/departments.entity';
+import { IUserRepository } from 'src/domain/repositories/users.repo.interface';
 
 @Injectable()
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
@@ -202,9 +203,16 @@ export class UserRepository {
       ? await this.organizationRepo.findOne({ where: { id: userData.organizationId } }) ?? undefined 
       : user.organization;
     
-    const department = userData.departmentId 
-      ? await this.departmentRepo.findOne({ where: { id: userData.departmentId } }) ?? undefined 
-      : user.department;
+      const department =
+      userData.departmentId && typeof userData.departmentId === 'number'
+        ? await this.departmentRepo.findOne({ where: { id: userData.departmentId } }) ?? undefined
+        : typeof userData.departmentId === 'string'
+          ? await this.departmentRepo.findOne({ where: { name: userData.departmentId } }) ?? undefined
+          : user.department;
+    
+    if (userData.departmentId && !department) {
+      throw new NotFoundException(`Department not found for ID/Name: ${userData.departmentId}`);
+    }
   
     const manager = userData.managerId 
       ? await this.userRepo.findOne({ where: { id: userData.managerId }, select: ['id', 'name', 'email'] }) ?? undefined 

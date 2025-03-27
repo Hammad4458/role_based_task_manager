@@ -1,3 +1,4 @@
+import { IUser } from 'src/domain/models/users.entity.interface';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -18,7 +19,7 @@ export enum UserRole {
 }
 
 @Entity()
-export class User {
+export class User implements IUser {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -38,15 +39,16 @@ export class User {
     nullable: true,
     cascade: ['insert', 'update'],
   })
-  superAdmin: SuperAdmin;
+  superAdmin?: SuperAdmin | null;
 
   @ManyToOne(() => Organization, (organization) => organization.users, {
     nullable: true,
     cascade: ['insert', 'update'],
   })
-  organization: Organization | null;
+  organization?: Organization | null;
 
   @ManyToOne(() => Department, (department) => department.users, {
+    nullable: false, // Every user must belong to a department
     cascade: ['insert', 'update'],
   })
   department: Department;
@@ -55,10 +57,10 @@ export class User {
     nullable: true,
     onDelete: 'SET NULL',
   })
-  manager: User;
+  manager?: User | null;
 
   @OneToMany(() => User, (user) => user.manager)
-  subordinates: User[];
+  subordinates?: User[];
 
   @OneToMany(() => Task, (task) => task.createdBy)
   tasksCreated: Task[];

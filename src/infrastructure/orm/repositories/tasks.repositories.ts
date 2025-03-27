@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Task, TaskPriority, TaskStatus } from '../entities/tasks.entity';
 import { Department } from '../entities/departments.entity';
 import { UserRepository } from './users.repositories';
-import { User } from '../entities/users.entity';
-
+import { ITaskRepository } from 'src/domain/repositories/tasks.repo.interface';
 @Injectable()
-export class TaskRepository {
+export class TaskRepository implements ITaskRepository{
   constructor(
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>,

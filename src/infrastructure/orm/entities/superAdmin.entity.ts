@@ -1,9 +1,8 @@
-import { ISuperAdmin } from 'src/domain/models/superAdmin.entity.interface';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Organization } from './organization.entity';
 import { Department } from './departments.entity';
 import { User } from './users.entity';
-
+import { ISuperAdmin } from 'src/domain/models/superAdmin.entity.interface';
 
 @Entity()
 export class SuperAdmin implements ISuperAdmin {
@@ -21,11 +20,11 @@ export class SuperAdmin implements ISuperAdmin {
 
   @ManyToMany(() => Organization, (organization) => organization.superAdmins)
   @JoinTable()
-  organizations: Organization[];
+  organizations?: Organization[];
 
-  @OneToMany(() => Department, (department) => department.superAdmin, {nullable : true})
-  departments: Department[];
+  @OneToMany(() => Department, (department) => department.superAdmin, { nullable: true })
+  departments?: Department[];
 
-  @OneToMany(() => User, (user) => user.superAdmin,{nullable : true})
-  users: User[];
+  @OneToMany(() => User, (user) => user.superAdmin, { nullable: true })
+  users?: User[];
 }

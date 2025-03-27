@@ -1,9 +1,8 @@
 import { IOrganization } from 'src/domain/models/organizations.entity.interface';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { SuperAdmin } from './superAdmin.entity';
 import { Department } from './departments.entity';
 import { User } from './users.entity';
-
 
 @Entity()
 export class Organization implements IOrganization {
@@ -17,7 +16,8 @@ export class Organization implements IOrganization {
   @JoinTable()
   superAdmins: SuperAdmin[];
 
-  @ManyToMany(() => Department, (department) => department.organizations)
+  @ManyToMany(() => Department, (department) => department.organizations, { cascade: true })  
+  @JoinTable() 
   departments: Department[];
 
   @OneToMany(() => User, (user) => user.organization)

@@ -3,38 +3,32 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Department } from '../entities/departments.entity';
 import { SuperAdminRepository } from './superAdmin.repositories';
-import { OrganizationRepository } from './organizations.repositories';
-import { User, UserRole } from '../entities/users.entity';
-import { UserRepository } from './users.repositories';
+import { IDepartmentRepository } from 'src/domain/repositories/departments.repo.interface';
 
 @Injectable()
-export class DepartmentRepository {
+export class DepartmentRepository implements IDepartmentRepository{
   constructor(
     @InjectRepository(Department)
     private readonly departmentRepo: Repository<Department>,
     private readonly superAdminRepo: SuperAdminRepository,
-    private readonly organizationRepo: OrganizationRepository,
   ) {}
 
   async createDepartment(departmentData: {
     name: string;
-    superAdmin: number; 
+    superAdmin: number;
     organizations?: number[];
-  }) {
+  }): Promise<Department> {
     const { name, superAdmin } = departmentData;
   
     if (!name) {
       throw new Error('Department name is required.');
     }
   
-  
-    // ✅ Fetch and validate SuperAdmin
     const superAdminEntity = await this.superAdminRepo.findById(superAdmin);
     if (!superAdminEntity) {
       throw new Error(`SuperAdmin with ID ${superAdmin} not found.`);
     }
   
-    // ✅ Create department
     let department = this.departmentRepo.create({
       name,
       superAdmin: superAdminEntity,
@@ -42,13 +36,17 @@ export class DepartmentRepository {
 
     department = await this.departmentRepo.save(department);
   
-    return this.departmentRepo.findOne({
+    const savedDepartment = await this.departmentRepo.findOne({
       where: { id: department.id },
       relations: ['superAdmin'],
     });
+
+    if (!savedDepartment) {
+      throw new Error('Failed to create department.');
+    }
+
+    return savedDepartment; 
   }
-  
- 
 
   async getAllDepartments(): Promise<Department[]> {
     return this.departmentRepo.find({
