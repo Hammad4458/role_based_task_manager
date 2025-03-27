@@ -6,6 +6,6 @@ export interface IOrganization {
   id: number;
   name: string;
   superAdmins: SuperAdmin[];
-  departments: Department[];  // ✅ Updated to reflect Many-to-Many
+  departments: Department[]; 
   users: User[];
 }

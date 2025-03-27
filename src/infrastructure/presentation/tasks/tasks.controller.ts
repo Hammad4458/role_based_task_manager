@@ -7,10 +7,11 @@ import {
   Inject,
   Put,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/infrastructure/guards/jwt-auth.guard';
-import { Task } from 'src/infrastructure/orm/entities/tasks.entity';
+import { Task, TaskStatus } from 'src/infrastructure/orm/entities/tasks.entity';
 import {
   TASK_USECASE_PROXY,
   UseCaseProxy,
@@ -54,5 +55,13 @@ export class TaskController {
   @Get()
   async getAllTasks() {
     return this.taskUseCaseProxy.useCase.getAllTasks();
+  }
+
+  @Patch(':taskId/status')
+  async updateTaskStatus(
+    @Param('taskId') taskId: number,
+    @Body('status') status: TaskStatus,
+  ) {
+    return this.taskUseCaseProxy.useCase.changeTaskStatus(taskId, status);
   }
 }

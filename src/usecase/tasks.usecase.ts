@@ -47,6 +47,9 @@ export class TaskUseCase {
       ): Promise<Task> {
         return this.taskRepo.updateTask(taskId, updateData);
       }
-  
+
+      async changeTaskStatus(taskId: number, status: TaskStatus): Promise<Task> {
+        return this.taskRepo.updateTaskStatus(taskId, status);
+      }
   
 }

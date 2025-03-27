@@ -42,10 +42,9 @@ export class UserRepository implements IUserRepository {
 
     let manager: User | null = null;
     if (userData.managerId) {
-
       manager = await this.userRepo.findOne({
         where: { id: userData.managerId },
-        select: ['id', 'name', 'email'], 
+        select: ['id', 'name', 'email'],
       });
 
       if (!manager) {
@@ -66,7 +65,7 @@ export class UserRepository implements IUserRepository {
     });
 
     if (manager) {
-      newUser.manager = manager; 
+      newUser.manager = manager;
     }
 
     return this.userRepo.save(newUser);
@@ -104,14 +103,14 @@ export class UserRepository implements IUserRepository {
 
   async getCreatorById(creatorId: number): Promise<User> {
     const creator = await this.userRepo.findOne({
-      where: { id: creatorId, role: In([UserRole.MANAGER, UserRole.ADMIN]) }, 
+      where: { id: creatorId, role: In([UserRole.MANAGER, UserRole.ADMIN]) },
     });
 
     if (!creator)
       throw new NotFoundException('Creator not found or invalid Role');
     return creator;
   }
- 
+
   async validateAssignedUsers(userIds: number[]): Promise<User[]> {
     const users = await this.userRepo.find({
       where: { id: In(userIds) },
@@ -129,7 +128,7 @@ export class UserRepository implements IUserRepository {
       where: {
         department: { id: departmentId },
       },
-      relations: ['department', 'organization','manager'], 
+      relations: ['department', 'organization', 'manager'],
     });
 
     if (!users.length) {
@@ -144,7 +143,7 @@ export class UserRepository implements IUserRepository {
       where: {
         department: { id: departmentId },
       },
-      relations: ['department', 'organization','manager'], 
+      relations: ['department', 'organization', 'manager'],
     });
 
     if (!users.length) {
@@ -157,7 +156,7 @@ export class UserRepository implements IUserRepository {
   async findManagersByDepartment(departmentId: number): Promise<User[]> {
     return await this.userRepo.find({
       where: {
-        department: { id: departmentId }, 
+        department: { id: departmentId },
         role: UserRole.MANAGER,
       },
       relations: ['subordinates'],
@@ -179,58 +178,68 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async updateUser(userId: number, userData: Partial<User> & { 
-    superAdminId?: number; 
-    organizationId?: number; 
-    departmentId?: number; 
-    managerId?: number; 
-  }): Promise<User> {
-    
-  
+  async updateUser(
+    userId: number,
+    userData: Partial<User> & {
+      superAdminId?: number;
+      organizationId?: number;
+      departmentId?: number;
+      managerId?: number;
+    },
+  ): Promise<User> {
     const user = await this.userRepo.findOne({
       where: { id: userId },
       relations: ['superAdmin', 'organization', 'department', 'manager'],
     });
-  
+
     if (!user) throw new NotFoundException(`User with ID ${userId} not found`);
-  
-    
-    const superAdmin = userData.superAdminId 
-      ? await this.superAdminRepo.findOne({ where: { id: userData.superAdminId } }) ?? undefined 
+
+    const superAdmin = userData.superAdminId
+      ? ((await this.superAdminRepo.findOne({
+          where: { id: userData.superAdminId },
+        })) ?? undefined)
       : user.superAdmin;
-    
-    const organization = userData.organizationId 
-      ? await this.organizationRepo.findOne({ where: { id: userData.organizationId } }) ?? undefined 
+
+    const organization = userData.organizationId
+      ? ((await this.organizationRepo.findOne({
+          where: { id: userData.organizationId },
+        })) ?? undefined)
       : user.organization;
-    
-      const department =
+
+    const department =
       userData.departmentId && typeof userData.departmentId === 'number'
-        ? await this.departmentRepo.findOne({ where: { id: userData.departmentId } }) ?? undefined
+        ? ((await this.departmentRepo.findOne({
+            where: { id: userData.departmentId },
+          })) ?? undefined)
         : typeof userData.departmentId === 'string'
-          ? await this.departmentRepo.findOne({ where: { name: userData.departmentId } }) ?? undefined
+          ? ((await this.departmentRepo.findOne({
+              where: { name: userData.departmentId },
+            })) ?? undefined)
           : user.department;
-    
+
     if (userData.departmentId && !department) {
-      throw new NotFoundException(`Department not found for ID/Name: ${userData.departmentId}`);
+      throw new NotFoundException(
+        `Department not found for ID/Name: ${userData.departmentId}`,
+      );
     }
-  
-    const manager = userData.managerId 
-      ? await this.userRepo.findOne({ where: { id: userData.managerId }, select: ['id', 'name', 'email'] }) ?? undefined 
+
+    const manager = userData.managerId
+      ? ((await this.userRepo.findOne({
+          where: { id: userData.managerId },
+          select: ['id', 'name', 'email'],
+        })) ?? undefined)
       : user.manager;
-  
+
     // Assign updated fields
     Object.assign(user, {
       ...userData,
-      password: userData.password || user.password, 
+      password: userData.password || user.password,
       superAdmin,
       organization,
       department,
       manager,
     });
-  
-  
+
     return this.userRepo.save(user);
   }
-  
-  
 }
