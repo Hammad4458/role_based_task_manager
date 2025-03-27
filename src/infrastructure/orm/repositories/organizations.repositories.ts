@@ -57,7 +57,7 @@ export class OrganizationRepository {
     
     async getAllOrganizations(): Promise<Organization[]> {
         return this.organizationRepo.find({
-            relations: ["superAdmins",  "users", "departments"],
+            relations: ["superAdmins",  "users", "departments","departments.users"],
         });
     }
 
@@ -94,16 +94,21 @@ export class OrganizationRepository {
           throw new Error('Organization not found');
         }
       
+        // Ensure departments is an array
+        organization.departments = organization.departments ?? [];
+      
         // Fetch the departments to be assigned
-        const newDepartments = await this.departmentRepo.findByIds(departmentIds);
+        const newDepartments = await this.departmentRepo.find({
+          where: { id: In(departmentIds) },
+        });
       
         // Find users that belong to the departments being removed
         const removedDepartments = organization.departments.filter(
-          (dep) => !departmentIds.includes(dep.id)
+          (dep) => dep?.id && !departmentIds.includes(dep.id)
         );
       
-        const usersToRemove = organization.users.filter((user) =>
-          removedDepartments.some((dep) => dep.id === user.department.id)
+        const usersToRemove = organization.users.filter(
+          (user) => user.department && removedDepartments.some((dep) => dep.id === user.department.id)
         );
       
         // Remove the users from the organization
@@ -114,9 +119,10 @@ export class OrganizationRepository {
       
         // Update the organization's departments
         organization.departments = newDepartments;
-        
+      
         return this.organizationRepo.save(organization);
       }
+      
       
       
     

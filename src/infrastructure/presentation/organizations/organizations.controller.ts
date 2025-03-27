@@ -37,7 +37,6 @@ export class OrganizationController {
     @Param('id') orgId: number,
     @Body('departmentIds') departmentIds: number[],
   ) {
-    console.log(orgId, departmentIds);
     return this.organizationUseCaseProxy.useCase.assignDepartments(
       orgId,
       departmentIds,
@@ -55,4 +54,5 @@ export class OrganizationController {
       departmentIds,
     );
   }
+
 }
