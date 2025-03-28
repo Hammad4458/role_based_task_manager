@@ -9,3 +9,9 @@ export class CreateDepartmentDto {
   @IsNotEmpty()
   superAdmin: number;
 }
+
+export class UpdateDepartmentNameDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+}

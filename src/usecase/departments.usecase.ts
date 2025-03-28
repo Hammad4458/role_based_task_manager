@@ -18,5 +18,8 @@ export class DepartmentUseCase{
         return this.departmentRepo.getAllDepartments();
     }
 
+    async updateDepartmentName(orgId: number, name: string) {
+        return this.departmentRepo.updateDepartmentName(orgId, name);
+      }
     
 }

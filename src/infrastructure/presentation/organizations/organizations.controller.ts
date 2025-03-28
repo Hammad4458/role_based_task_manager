@@ -14,7 +14,7 @@ import {
   UseCaseProxy,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { OrganizationUseCase } from 'src/usecase/organizations.usecase';
-import { AssignDepartmentsDto, CreateOrganizationDto, UpdateDepartmentsDto } from './organizations.dto';
+import { AssignDepartmentsDto, CreateOrganizationDto, UpdateDepartmentsDto, UpdateOrganizationNameDto } from './organizations.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('organization')
@@ -53,6 +53,17 @@ export class OrganizationController {
     return this.organizationUseCaseProxy.useCase.updateDepartments(
       orgId,
       body.departmentIds,
+    );
+  }
+
+  @Put(':id/update-name')
+  async updateOrganizationName(
+    @Param('id') orgId: number,
+    @Body() body: UpdateOrganizationNameDto,
+  ) {
+    return this.organizationUseCaseProxy.useCase.updateOrganizationName(
+      orgId,
+      body.name,
     );
   }
 }

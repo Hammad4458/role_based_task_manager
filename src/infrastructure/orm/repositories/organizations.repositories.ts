@@ -123,7 +123,16 @@ export class OrganizationRepository implements IOrganizationRepository {
       
         return this.organizationRepo.save(organization);
       }
-      
+
+      async updateOrganizationName(orgId: number, name: string): Promise<Organization> {
+        const organization = await this.organizationRepo.findOne({ where: { id: orgId } });
+        if (!organization) {
+          throw new Error('Organization not found');
+        }
+    
+        organization.name = name;
+        return this.organizationRepo.save(organization);
+      }
       
       
     

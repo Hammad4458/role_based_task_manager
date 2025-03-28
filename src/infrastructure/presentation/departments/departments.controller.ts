@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/infrastructure/guards/jwt-auth.guard';
 import {
   DEPARTMENT_USECASE_PROXY,
   UseCaseProxy,
 } from 'src/infrastructureUseCaseBridge/usecase.bridge.proxy';
 import { DepartmentUseCase } from 'src/usecase/departments.usecase';
-import { CreateDepartmentDto } from './departments.dto';
+import { CreateDepartmentDto, UpdateDepartmentNameDto } from './departments.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('department')
@@ -24,4 +24,15 @@ export class DepartmentController {
   async getAllDepartments() {
     return this.departmentUseCaseProxy.useCase.getAllDepartments();
   }
+
+   @Put(':id/update-name')
+    async updateOrganizationName(
+      @Param('id') orgId: number,
+      @Body() body: UpdateDepartmentNameDto,
+    ) {
+      return this.departmentUseCaseProxy.useCase.updateDepartmentName(
+        orgId,
+        body.name,
+      );
+    }
 }

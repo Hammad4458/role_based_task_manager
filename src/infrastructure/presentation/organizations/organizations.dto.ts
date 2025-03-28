@@ -21,3 +21,9 @@ export class UpdateDepartmentsDto {
   @IsNotEmpty()
   departmentIds: number[];
 }
+
+export class UpdateOrganizationNameDto {
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+}

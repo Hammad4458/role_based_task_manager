@@ -25,4 +25,8 @@ export class OrganizationUseCase {
   async updateDepartments(orgId: number, departmentIds: number[]) {
     return this.organizationRepo.updateDepartments(orgId, departmentIds);
   }
+
+  async updateOrganizationName(orgId: number, name: string) {
+    return this.organizationRepo.updateOrganizationName(orgId, name);
+  }
 }

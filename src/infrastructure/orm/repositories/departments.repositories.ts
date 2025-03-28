@@ -53,4 +53,14 @@ export class DepartmentRepository implements IDepartmentRepository{
       relations: ['superAdmin', 'organizations', 'users'],
     });
   }
+
+   async updateDepartmentName(orgId: number, name: string): Promise<Department> {
+          const department = await this.departmentRepo.findOne({ where: { id: orgId } });
+          if (!department) {
+            throw new Error('Department not found');
+          }
+      
+          department.name = name;
+          return this.departmentRepo.save(department);
+        }
 }
