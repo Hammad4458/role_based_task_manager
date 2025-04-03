@@ -83,4 +83,9 @@ export class UserController {
   async updateUser(@Param('id') userId: number, @Body() body: UpdateUserDto) {
     return await this.userUseCaseProxy.useCase.updateUser(userId, body);
   }
+
+  @Post('refresh-token')
+  async refreshAccessToken(@Body() body: { refresh_token: string }) {
+    return await this.userUseCaseProxy.useCase.refreshAccessToken(body.refresh_token);
+  }
 }

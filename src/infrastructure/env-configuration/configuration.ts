@@ -10,7 +10,8 @@ const DatabaseConfig = registerAs('database', ()=>({
 }));
 
 const JwtConfig = registerAs('jwtConfig', ()=>({
-    key: process.env.SECRET_KEY
+    key: process.env.SECRET_KEY,
+    refreshKey: process.env.REFRESH_KEY
 }));
 
 export default [DatabaseConfig, JwtConfig];

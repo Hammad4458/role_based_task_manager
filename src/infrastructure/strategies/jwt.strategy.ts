@@ -16,7 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: secretKey,
     });
 
-    this.logger.log(`JWT Secret Key: ${secretKey}`); // Log the secret key
+    this.logger.log(`JWT Secret Key: ${secretKey}`); 
   }
 
   async validate(payload: { id: number; email: string }) {

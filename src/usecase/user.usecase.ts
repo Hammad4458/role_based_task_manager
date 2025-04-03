@@ -85,11 +85,33 @@ export class UserUseCase {
     // 🔑 Generate JWT token
     const payload = { email: user.email, id: user.id };
     const access_token = this.jwtService.sign(payload);
+    const refresh_token = this.jwtService.signRefreshToken(payload);
 
     return {
       user: userWithoutPassword,
       access_token,
+      refresh_token,
     };
+  }
+
+  async refreshAccessToken(refreshToken: string) {
+    try {
+      // Verify the refresh token
+      const decoded = this.jwtService.verifyRefreshToken(refreshToken);
+
+      // Check if the user exists
+      const user = await this.userRepo.getUserByEmail(decoded.email);
+      if (!user || user.id !== decoded.id) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      // Generate new access token
+      const newAccessToken = this.jwtService.sign({ email: user.email, id: user.id });
+
+      return { access_token: newAccessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
   }
 
   async getManagersByDepartment(departmentId: number) {

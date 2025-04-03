@@ -51,4 +51,10 @@ export class SuperAdminController {
     const token = authHeader.replace('Bearer ', '').trim();
     return await this.superAdminUseCaseProxy.useCase.getUserFromToken(token);
   }
+
+  @Post('refresh-token')
+  async refreshAccessToken(@Body() body: { refresh_token: string }) {
+    return await this.superAdminUseCaseProxy.useCase.refreshAccessToken(body.refresh_token);
+  }
+  
 }
